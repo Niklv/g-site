@@ -9,7 +9,7 @@ app.get("/", function(req, res) {
 app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.bodyParser());
-  app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/source'));
   app.use(express.errorHandler({
     dumpExceptions: true,
     showStack: true
