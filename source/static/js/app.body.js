@@ -23,7 +23,6 @@ Game = (function(_super) {
 })(Backbone.Model);
 
 var GamesCollection, _ref,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -31,21 +30,11 @@ GamesCollection = (function(_super) {
   __extends(GamesCollection, _super);
 
   function GamesCollection() {
-    this.initialize = __bind(this.initialize, this);    _ref = GamesCollection.__super__.constructor.apply(this, arguments);
+    _ref = GamesCollection.__super__.constructor.apply(this, arguments);
     return _ref;
   }
 
   GamesCollection.prototype.model = Game;
-
-  GamesCollection.prototype.initialize = function() {
-    var i;
-
-    i = 0;
-    while (i < 10) {
-      this.add(new Game());
-      i++;
-    }
-  };
 
   return GamesCollection;
 
@@ -95,22 +84,62 @@ GameView = (function(_super) {
 
   GameView.prototype.className = "game";
 
+  GameView.prototype.initialize = function(game) {
+    return this.model = game;
+  };
+
   GameView.prototype.render = function() {
-    return this.el.innerHTML = this.model.get('name');
+    $(this.el).append("<img class='thumb' src='" + this.model.thumbnail + "'><div class='name'>" + this.model.name + "</div>");
+    return this.el;
   };
 
   return GameView;
 
 })(Backbone.View);
 
+var GamesView, _ref,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+GamesView = (function(_super) {
+  __extends(GamesView, _super);
+
+  function GamesView() {
+    _ref = GamesView.__super__.constructor.apply(this, arguments);
+    return _ref;
+  }
+
+  GamesView.prototype.initialize = function(games) {
+    this.el = $("#games");
+    this.model = games;
+    return this.listenTo(games, 'add', this.renderNewGame);
+  };
+
+  GamesView.prototype.render = function() {
+    return this;
+  };
+
+  GamesView.prototype.renderNewGame = function(game, games, options) {
+    var gameview;
+
+    gameview = new GameView(game);
+    $(this.el).append(gameview.render());
+    return this.el;
+  };
+
+  return GamesView;
+
+})(Backbone.View);
+
 $(function() {
-  var App, games;
+  var games, gamesView, i;
 
   games = new GamesCollection();
-  console.log(games.toJSON());
-  console.log(games.at(0));
-  console.log(games.models);
-  App = new AppView();
-  App.listenTo(games, 'add', App.render());
-  App.render();
+  gamesView = new GamesView(games);
+  gamesView.render();
+  i = 0;
+  while (i < 30) {
+    games.add(new Game());
+    i++;
+  }
 });
