@@ -1,18 +1,18 @@
-body{
+body {
   background: #093D62;
   color: white;
 }
 
-.navbar-inner{
+.navbar-inner {
   color: white;
   border-bottom: solid 1px #aaaaaa;
   .gradient(top, #12a1ca, #11729f);
-  #logo{
+  #logo {
     display: block;
     padding: 10px 20px 10px 5px;
     font-size: 20px;
   }
-  #userpanel, #sitepanel{
+  #userpanel, #sitepanel {
     .border-box;
     display: block;
     padding: 10px;
@@ -27,46 +27,84 @@ body{
   }
 }
 
-.user-block{
-  .avatar.small{
+.user-block {
+  .avatar.small {
     width: 38px;
     height: 38px;
   }
-  .username, .xp{
+  .username, .xp {
     float: left;
     clear: both;
   }
 }
 
 .coins-block {
-  img{
-    float:left;
+  img {
+    float: left;
     margin-top: 4px;
   }
-  .coins{
+  .coins {
     margin-top: 5px;
     margin-left: 6px;
   }
 }
 
+@game_img_margin: 5px;
+@game_img_min_size: 141px;
+@game_img_max_size: 150px;
 
 
-#games{
+#games {
   margin-top: 63px;
+  padding: 5px;
+  text-align: center;
+  display: inline-block;
+  .imagesInRow(2);
+  .imagesInRow(3);
+  .imagesInRow(4);
+  .imagesInRow(5);
+  .imagesInRow(6);
+  .imagesInRow(7);
+  .imagesInRow(8);
+  .imagesInRow(9);
+  .imagesInRow(10);
+  .imagesInRow(11);
+  .imagesInRow(12);
+  .imagesInRow(13);
+  .imagesInRow(14);
+  .imagesInRow(15);
+  .imagesInRow(16);
   .game {
-    float: left;
-    margin: 10px;
+    display: inline-block;
+    padding: @game_img_margin;
+    .border-box();
+    img {
+      width: 100%;
+      height: 100%;
+      min-width: @game_img_min_size;
+      max-width: @game_img_max_size;
+    }
   }
 }
 
-
-
-.border-box (){
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
+.imagesInRow (@img:6) {
+  @ratio: 0;
+  @min: (@img - @ratio) * (@game_img_max_size)+1;
+  @max: (@img + 1 - @ratio)* (@game_img_max_size);
+  @media (min-width:@min) and (max-width: @max) {
+    .game {
+      width: 100% / @img;
+      height: auto;
+      max-width: @game_img_max_size + 2*@game_img_margin;
+      //min-width: @game_img_min_size;
+    }
+  }
 }
 
+.border-box () {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
 
 .gradient (@origin: top, @start: #ffffff, @stop: #ffffff) {
   background-color: @start;
