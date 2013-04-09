@@ -53,13 +53,17 @@ body {
 @game_img_min_size: 141px;
 @game_img_max_size: 150px;
 
+.content{
+  padding: 68px 5px 0px 5px;
+  text-align: center;
+}
 
 #games {
-  margin-top: 63px;
-  padding: 5px;
   text-align: center;
-  display: inline-block;
+  display: inline;
   line-height: 0px;
+  -moz-text-align-last: left;
+  text-align-last: left;
   .imagesInRow(2);
   .imagesInRow(3);
   .imagesInRow(4);
@@ -79,20 +83,25 @@ body {
     display: inline-block;
     padding: @game_img_margin;
     .border-box();
-    overflow: hidden;
     img {
       width: 100%;
       height: 100%;
       min-width: @game_img_min_size;
       max-width: @game_img_max_size;
     }
+
+
+    &:last-child{
+      //margin-right:100%;
+
+    }
+    .clear{clear:both;}
   }
 }
 
 .imagesInRow (@img:6) {
-  @ratio: 0;
-  @min: (@img - @ratio) * (@game_img_max_size)+1;
-  @max: (@img + 1 - @ratio)* (@game_img_max_size);
+  @min: @img * (@game_img_max_size)+1;
+  @max: (@img + 1)* (@game_img_max_size);
   @media (min-width:@min) and (max-width: @max) {
     .game {
       width: 100% / @img;
