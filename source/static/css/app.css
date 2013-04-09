@@ -54,14 +54,10 @@ body {
 }
 .content {
   padding: 68px 5px 0px 5px;
-  text-align: center;
 }
 #games {
-  text-align: center;
-  display: inline;
   line-height: 0px;
-  -moz-text-align-last: left;
-  text-align-last: left;
+  display: inline;
 }
 @media (min-width: 301px) and (max-width: 450px) {
   #games .game {
@@ -179,7 +175,4 @@ body {
   height: 100%;
   min-width: 141px;
   max-width: 150px;
-}
-#games .game .clear {
-  clear: both;
 }

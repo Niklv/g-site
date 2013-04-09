@@ -132,14 +132,24 @@ GamesView = (function(_super) {
 })(Backbone.View);
 
 $(function() {
-  var games, gamesView, i;
+  var center_games, games, gamesView, i;
 
   games = new GamesCollection();
   gamesView = new GamesView(games);
   gamesView.render();
   i = 0;
-  while (i < 30) {
+  while (i < 100) {
     games.add(new Game());
     i++;
   }
+  center_games = function() {
+    var margin;
+
+    margin = ($(window).width() - $("#games").width()) / 2;
+    return $(".content").css("margin-left", margin);
+  };
+  $(document).ready(function() {
+    $(window).resize(center_games);
+    return center_games();
+  });
 });
