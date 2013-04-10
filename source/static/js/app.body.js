@@ -101,7 +101,7 @@ GameView = (function(_super) {
   };
 
   GameView.prototype.render = function() {
-    $(this.el).append("<img class='thumb' src='" + this.model.thumbnail + "'><div class='name'>" + this.model.name + "</div>");
+    $(this.el).append("<a href='#'><img class='thumb' src='" + this.model.thumbnail + "'><div class='name'>" + this.model.name + "</div></a>");
     return this.el;
   };
 
@@ -130,7 +130,7 @@ GamesView = (function(_super) {
     this.listenTo(this.collection, 'add', this.appendGame);
     return this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
       strict: false,
-      scrollOffset: 0,
+      scrollOffset: 200,
       error: function() {
         var i, _results;
 
@@ -170,11 +170,15 @@ GamesView = (function(_super) {
 })(Backbone.View);
 
 $(function() {
-  var center_games, games, gamesView, initFullScreen;
+  var center_games, games, gamesView, initFullScreen,
+    _this = this;
 
+  games = new GamesCollection();
+  gamesView = new GamesView(games);
   center_games = function() {
     var margin;
 
+    initFullScreen();
     margin = ($(window).width() - $("#games").width() - 10) / 2;
     return $(".content").css("margin-left", margin);
   };
@@ -185,17 +189,15 @@ $(function() {
       return;
     }
     i = 0;
-    while (i < 20) {
+    while (i < 40) {
       games.add(new Game());
       i++;
     }
-    center_games();
     return setTimeout(initFullScreen, 100);
   };
-  games = new GamesCollection();
-  gamesView = new GamesView(games);
-  initFullScreen();
+  center_games();
   $(document).ready(function() {
-    return $(window).resize(center_games);
+    $(window).resize(center_games);
+    return setTimeout(center_games, 200);
   });
 });
