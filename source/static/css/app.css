@@ -302,15 +302,15 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -85%;
+  bottom: -60%;
   padding: 5px;
   background: black;
   background: rgba(0, 0, 0, 0.64);
-  transition: all 0.5s cubic-bezier(1, 0.08, 0, 1);
-  -webkit-transition: all 0.5s cubic-bezier(1, 0.08, 0, 1);
-  -moz-transition: all 0.5s cubic-bezier(1, 0.08, 0, 1);
-  -o-transition: all 0.5s cubic-bezier(1, 0.08, 0, 1);
-  -ms-transition: all 0.5s cubic-bezier(1, 0.08, 0, 1);
+  transition: all 0.5s cubic-bezier(0.71, 0, 0.295, 1);
+  -webkit-transition: all 0.5s cubic-bezier(0.71, 0, 0.295, 1);
+  -moz-transition: all 0.5s cubic-bezier(0.71, 0, 0.295, 1);
+  -o-transition: all 0.5s cubic-bezier(0.71, 0, 0.295, 1);
+  -ms-transition: all 0.5s cubic-bezier(0.71, 0, 0.295, 1);
 }
 #games .game > a:hover .name {
   bottom: 0px;
