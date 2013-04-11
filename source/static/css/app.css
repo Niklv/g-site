@@ -315,3 +315,6 @@ body {
 #games .game > a:hover .name {
   bottom: 0px;
 }
+#GamePopup {
+  background: #12a1ca;
+}
