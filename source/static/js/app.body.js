@@ -180,6 +180,9 @@ $(function() {
 
     initFullScreen();
     margin = ($(window).width() - $("#games").width() - 10) / 2;
+    if (margin > 40) {
+      margin = 0;
+    }
     return $(".content").css("margin-left", margin);
   };
   initFullScreen = function() {

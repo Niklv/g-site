@@ -9,7 +9,7 @@ class GamesView extends Backbone.View
       strict: false
       scrollOffset: 600
       error: ()=> #fetch will be error
-        i =0
+        i = 0
         while i<20
           @collection.add new Game()
           i++

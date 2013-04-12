@@ -9,6 +9,7 @@ $ ()->
   center_games = ()->
     initFullScreen() #for situation from tiny to large screen resize
     margin = ($(window).width() - $("#games").width() - 10)/2
+    if margin>40 then margin =0
     $(".content").css "margin-left", margin
 
   #Init full screen of games, toolbar must appear
