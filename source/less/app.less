@@ -262,9 +262,9 @@ body {
   @d_pad: 2 * @game_img_padding; //double padding
   @min_game_size: @game_imgsize_min + @d_pad;
   @max_game_size: @game_imgsize_max + @d_pad;
-  @min: @img * (@min_game_size) + @d_pad + 1;
-  @max: (@img + 1)* (@min_game_size) + @d_pad;
-  @when_increase_margins: @img * (@game_imgsize_max + 2*@game_img_padding_big) + @d_pad;
+  @min: @img * (@min_game_size) + @d_pad + 1 + 15;
+  @max: (@img + 1)* (@min_game_size) + @d_pad + 15;
+  @when_increase_margins: @img * (@game_imgsize_max + 2*@game_img_padding_big) + @d_pad + 15;
 
   @media (min-width:@when_increase_margins) and (max-width: @max) {
     .game {

@@ -56,32 +56,6 @@ GamesCollection = (function(_super) {
 
 })(Backbone.Collection);
 
-var AppView, _ref,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-AppView = (function(_super) {
-  __extends(AppView, _super);
-
-  function AppView() {
-    _ref = AppView.__super__.constructor.apply(this, arguments);
-    return _ref;
-  }
-
-  AppView.prototype.initialize = function() {
-    this.el = $("div#appView");
-  };
-
-  AppView.prototype.render = function() {};
-
-  AppView.prototype.addOne = function() {
-    return console.log("ADDONE");
-  };
-
-  return AppView;
-
-})(Backbone.View);
-
 var GameView, gameBoxTmplStr, gamePageTmplStr, gameboxFn, gamepageFn, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -113,12 +87,10 @@ gamePageTmplStr = '<div class="game-page-body">\
 
 gamepageFn = doT.template(gamePageTmplStr, void 0, {});
 
-gameBoxTmplStr = '<div class="game">\
-  <a href="/games/{{=it.link}}">\
+gameBoxTmplStr = '<a href="/games/{{=it.link}}">\
     <img class="thumb" src="{{=it.thumbnail}}">\
     <div class="name">{{=it.name}}</div>\
-  </a>\
-</div>';
+  </a>';
 
 gameboxFn = doT.template(gameBoxTmplStr, void 0, {});
 
@@ -139,7 +111,8 @@ GameView = (function(_super) {
   };
 
   GameView.prototype.render = function() {
-    return gameboxFn(this.model);
+    this.$el.append(gameboxFn(this.model));
+    return this.$el;
   };
 
   GameView.prototype.renderGamePage = function() {
@@ -164,13 +137,13 @@ GamesView = (function(_super) {
     return _ref;
   }
 
+  GamesView.prototype.el = "div#games";
+
   GamesView.prototype.initialize = function() {
     var _this = this;
 
-    _.bindAll(this, "render");
-    this.el = $("#games");
     this.listenTo(this.collection, 'add', this.appendGame);
-    return this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
+    this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
       strict: false,
       scrollOffset: 600,
       error: function() {
@@ -185,13 +158,14 @@ GamesView = (function(_super) {
         return _results;
       }
     });
+    return this.render();
   };
 
   GamesView.prototype.render = function() {
     this.collection.forEach(function(game) {
       return this.appendGame(game);
     });
-    return this.el;
+    return this.$el;
   };
 
   GamesView.prototype.appendGame = function(game, games, options) {
@@ -200,9 +174,8 @@ GamesView = (function(_super) {
     gameview = new GameView({
       model: game
     });
-    $(this.el).append(gameview.render());
-    gameview.delegateEvents();
-    return this.el;
+    this.$el.append(gameview.render());
+    return this.$el;
   };
 
   GamesView.prototype.remove = function() {
@@ -214,25 +187,44 @@ GamesView = (function(_super) {
 
 })(Backbone.View);
 
-$(function() {
-  var center_games, games, gamesView, initFullScreen,
-    _this = this;
+var App, _ref,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  games = new GamesCollection();
-  gamesView = new GamesView({
-    collection: games
-  });
-  center_games = function() {
+App = (function(_super) {
+  __extends(App, _super);
+
+  function App() {
+    this.initFullScreen = __bind(this.initFullScreen, this);
+    this.center_games = __bind(this.center_games, this);    _ref = App.__super__.constructor.apply(this, arguments);
+    return _ref;
+  }
+
+  App.prototype.initialize = function() {
+    this.games = new GamesCollection();
+    this.gamesView = new GamesView({
+      collection: this.games
+    });
+    return this.render();
+  };
+
+  App.prototype.render = function() {
+    return this.initFullScreen();
+  };
+
+  App.prototype.center_games = function() {
     var margin;
 
-    initFullScreen();
+    this.initFullScreen();
     margin = ($(window).width() - $("#games").width() - 10) / 2;
     if (margin > 40) {
       margin = 0;
     }
     return $(".content").css("margin-left", margin);
   };
-  initFullScreen = function() {
+
+  App.prototype.initFullScreen = function() {
     var i;
 
     if ($("body").height() > $(window).height()) {
@@ -240,31 +232,38 @@ $(function() {
     }
     i = 0;
     while (i < 50) {
-      games.add(new Game());
+      this.games.add(new Game());
       i++;
     }
-    return setTimeout(initFullScreen, 100);
+    return setTimeout(this.initFullScreen, 100);
   };
-  center_games();
-  $(document).ready(function() {
-    $(window).resize(center_games);
-    return setTimeout(center_games, 200);
-  });
-  /*
-  $("body").delegate "a", "click", ()->
-    href = $(@).attr("href");
-  
-    if href=="/"
-      $("#GamePage").modal 'hide'
-      history.back()
-      return false
-      #else if href.match(/\/games\//)
-      #console.log "it is a game"
-      #history.pushState null, null, href
-      #$("#GamePage").modal 'show'
-      return false
-    else
-      return true
-  */
 
+  return App;
+
+})(Backbone.View);
+
+$(function() {
+  var app;
+
+  app = new App();
+  $(window).resize(app.center_games);
+  return setTimeout(app.center_games, 200);
 });
+
+/*
+    $("body").delegate "a", "click", ()->
+      href = $(@).attr("href");
+
+      if href=="/"
+        $("#GamePage").modal 'hide'
+        history.back()
+        return false
+        #else if href.match(/\/games\//)
+        #console.log "it is a game"
+        #history.pushState null, null, href
+        #$("#GamePage").modal 'show'
+        return false
+      else
+        return true
+*/
+

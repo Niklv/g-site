@@ -24,22 +24,24 @@ gamePageTmplStr = '<div class="game-page-body">
 </div>'
 gamepageFn = doT.template gamePageTmplStr, undefined, {}
 
-gameBoxTmplStr = '<div class="game">
-  <a href="/games/{{=it.link}}">
+gameBoxTmplStr = '<a href="/games/{{=it.link}}">
     <img class="thumb" src="{{=it.thumbnail}}">
     <div class="name">{{=it.name}}</div>
-  </a>
-</div>'
+  </a>'
 gameboxFn = doT.template gameBoxTmplStr, undefined, {}
+
+
+
 
 class GameView extends Backbone.View
   tagName: "div"
-  className: "game"
+  className : "game"
   events: {
     'click a': 'renderGamePage'
   },
   render: ()->
-    return gameboxFn @model
+    @$el.append gameboxFn @model
+    return @$el
   renderGamePage: ()->
     console.log "RENDER"
     $("#GamePage").html gamepageFn @model
