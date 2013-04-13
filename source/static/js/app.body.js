@@ -138,13 +138,8 @@ GameView = (function(_super) {
     'click a': 'renderGamePage'
   };
 
-  GameView.prototype.initialize = function(game) {
-    return this.model = game;
-  };
-
   GameView.prototype.render = function() {
     return gameboxFn(this.model);
-    return this.delegateEvents();
   };
 
   GameView.prototype.renderGamePage = function() {
@@ -169,12 +164,11 @@ GamesView = (function(_super) {
     return _ref;
   }
 
-  GamesView.prototype.initialize = function(games) {
+  GamesView.prototype.initialize = function() {
     var _this = this;
 
     _.bindAll(this, "render");
     this.el = $("#games");
-    this.collection = games;
     this.listenTo(this.collection, 'add', this.appendGame);
     return this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
       strict: false,
@@ -203,7 +197,9 @@ GamesView = (function(_super) {
   GamesView.prototype.appendGame = function(game, games, options) {
     var gameview;
 
-    gameview = new GameView(game);
+    gameview = new GameView({
+      model: game
+    });
     $(this.el).append(gameview.render());
     gameview.delegateEvents();
     return this.el;
@@ -223,7 +219,9 @@ $(function() {
     _this = this;
 
   games = new GamesCollection();
-  gamesView = new GamesView(games);
+  gamesView = new GamesView({
+    collection: games
+  });
   center_games = function() {
     var margin;
 
