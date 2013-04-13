@@ -1,10 +1,8 @@
-class App extends Backbone.View
+class App extends Backbone.Router
   initialize: ()->
     @games = new GamesCollection()
     @gamesView = new GamesView {collection:@games}
-    @render()
-
-  render: ()->
+    @gamePageView = new GamePageView {el: $ "#GamePage"}
     @initFullScreen()
 
   #center games div
@@ -13,7 +11,6 @@ class App extends Backbone.View
     margin = ($(window).width() - $("#games").width() - 10)/2
     if margin>40 then margin = 0
     $(".content").css "margin-left", margin
-
 
   #Init full screen of games, toolbar must appear
   initFullScreen: ()=>
@@ -24,33 +21,32 @@ class App extends Backbone.View
       i++
     setTimeout @initFullScreen, 100
 
+  routes:{
+    "games/:game_link": "gamepage"
+    "": "index"
+  }
+
+  init: ()->
+    return
+
+  index:()->
+    @gamePageView.$el.modal 'hide'
+  gamepage: (game_link)->
+    @gamePageView.model = @games.find (game)-> return game.link == game_link
+    @gamePageView.render().modal 'show'
 
 $ () ->
   app = new App()
   $(window).resize app.center_games
   setTimeout app.center_games, 200
 
+  Backbone.history.start {pushState: true}
+  $(document).delegate "a", "click", (e)->
+    if e.currentTarget.getAttribute("nobackbone") then return
+    href = e.currentTarget.getAttribute('href')
+    return true unless href
 
-
-
-
-
-###
-    $("body").delegate "a", "click", ()->
-      href = $(@).attr("href");
-
-      if href=="/"
-        $("#GamePage").modal 'hide'
-        history.back()
-        return false
-        #else if href.match(/\/games\//)
-        #console.log "it is a game"
-        #history.pushState null, null, href
-        #$("#GamePage").modal 'show'
-        return false
-      else
-        return true
-    ###
-
-#g = new GameView new Game
-#console.log g.renderGamePage()
+    if href[0] is '/'
+      uri = if Backbone.history._hasPushState then e.currentTarget.getAttribute('href').slice(1) else "!/"+e.currentTarget.getAttribute('href').slice(1)
+      app.navigate uri, {trigger:true}
+      return false
