@@ -331,40 +331,44 @@ body {
 #games .game > a:hover .name {
   bottom: 0px;
 }
-#GamePopup {
+#GamePage {
   overflow: hidden;
   background: #11729f;
 }
 @media (min-width: 1303px) {
-  #GamePopup {
+  #GamePage {
     width: 1283px;
     margin-left: -641.5px;
   }
-  #GamePopup .game-window {
-    width: 810px;
+  #GamePage .game-page-body {
     height: 645px;
+  }
+  #GamePage .game-window {
+    width: 810px;
   }
 }
 @media (max-width: 1303px) {
-  #GamePopup {
+  #GamePage {
     width: 1123px;
     margin-left: -561.5px;
   }
-  #GamePopup .game-window {
-    width: 650px;
+  #GamePage .game-page-body {
     height: 525px;
   }
+  #GamePage .game-window {
+    width: 650px;
+  }
 }
-#GamePopup .game-page-body {
-  height: 600px;
+#GamePage .game-page-body {
   padding: 0px;
 }
-#GamePopup .game-page-body > div {
+#GamePage .game-page-body > div {
   float: left;
   height: 100%;
   border-right: 1px solid #115579;
+  position: relative;
 }
-#GamePopup .game-page-body > div .top {
+#GamePage .game-page-body > div .top {
   background-color: #12a1ca;
   background-image: -webkit-linear-gradient(top, #12a1ca, #11729f);
   background-image: -moz-linear-gradient(top, #12a1ca, #11729f);
@@ -377,17 +381,68 @@ body {
   text-align: center;
   line-height: 45px;
   font-weight: bold;
+  postion: relative;
 }
-#GamePopup .game-page-body > div .panel-content {
+#GamePage .game-page-body > div .top .game-name {
+  position: absolute;
+  left: 45px;
+  right: 135px;
+  top: 0px;
+}
+#GamePage .game-page-body > div .top .typicn {
+  width: 45px;
+  position: absolute;
+  top: 0px;
+  height: 45px;
+  text-decoration: none;
+}
+#GamePage .game-page-body > div .top .typicn:before {
+  font-size: 33px;
+  vertical-align: middle;
+}
+#GamePage .game-page-body > div .top .typicn:hover {
+  background-color: #11729f;
+  background-image: -webkit-linear-gradient(top, #11729f, #12a1ca);
+  background-image: -moz-linear-gradient(top, #11729f, #12a1ca);
+  background-image: -o-linear-gradient(top, #11729f, #12a1ca);
+  background-image: -ms-linear-gradient(top, #11729f, #12a1ca);
+  background-image: linear-gradient(top, #11729f, #12a1ca);
+}
+#GamePage .game-page-body > div .top .previous {
+  left: 0px;
+  border-right: 1px solid #115579;
+  color: #ffff00;
+}
+#GamePage .game-page-body > div .top .thumbsUp {
+  right: 90px;
+  border-left: 1px solid #115579;
+  color: #25dd45;
+}
+#GamePage .game-page-body > div .top .thumbsDown {
+  right: 45px;
+  border-left: 1px solid #115579;
+  color: #dd5731;
+}
+#GamePage .game-page-body > div .top .heart {
+  right: 0px;
+  border-left: 1px solid #115579;
+  color: #ee4270;
+}
+#GamePage .game-page-body > div .panel-content {
   padding: 5px;
-  height: 100%;
-  width: 100%;
-  padding-top: 50px;
+  position: absolute;
+  top: 45px;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
 }
-#GamePopup .game-page-body .games-list {
+#GamePage .game-page-body .games-list {
   width: 150px;
 }
-#GamePopup .game-page-body .ad {
+#GamePage .game-page-body .ad {
   width: 170px;
   border-right: none;
+}
+.modal-backdrop {
+  margin-top: 64px;
 }

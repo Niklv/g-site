@@ -1,6 +1,6 @@
 $ ()->
   games = new GamesCollection()
-  gamesView = new GamesView(games)
+  gamesView = new GamesView {collection:games}
 
 
 
@@ -26,5 +26,23 @@ $ ()->
     $(window).resize center_games
     setTimeout center_games, 200
 
+  ###
+  $("body").delegate "a", "click", ()->
+    href = $(@).attr("href");
 
+    if href=="/"
+      $("#GamePage").modal 'hide'
+      history.back()
+      return false
+      #else if href.match(/\/games\//)
+      #console.log "it is a game"
+      #history.pushState null, null, href
+      #$("#GamePage").modal 'show'
+      return false
+    else
+      return true
+  ###
+
+  #g = new GameView new Game
+  #console.log g.renderGamePage()
   return

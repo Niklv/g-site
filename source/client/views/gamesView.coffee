@@ -1,9 +1,8 @@
 class GamesView extends Backbone.View
 
-  initialize: (games)->
+  initialize: ()->
     _.bindAll(@, "render");
     @el = $ "#games"
-    @collection = games
     @listenTo @collection, 'add', @appendGame
     @infiniScroll = new Backbone.InfiniScroll @collection, {
       strict: false
@@ -17,12 +16,13 @@ class GamesView extends Backbone.View
 
   render: ()->
     @collection.forEach (game)->
-      @renderNewGame(game)
+      @appendGame(game)
     return @el
 
   appendGame: (game, games, options)->
-    gameview = new GameView(game);
+    gameview = new GameView {model : game};
     $(@el).append gameview.render()
+    gameview.delegateEvents()
     return @el
 
   remove: ()->

@@ -9,7 +9,7 @@
 
 //padding on game page
 @gp_padding: 5px;
-@gp_margin:10px;
+@gp_margin: 10px;
 //blocks sizes on game page
 @gp_games_list_w: 140px;
 @gp_game_window_wmax: 800px;
@@ -100,7 +100,7 @@ body {
   .game()
 }
 
-#GamePopup{
+#GamePage{
 
   @base_size: 2 * @gp_games_list_w + @gp_ad_w + 8 * @gp_padding + 3;
   @modal_max_w: @base_size + @gp_game_window_wmax + 2 * @gp_margin;
@@ -108,30 +108,35 @@ body {
     @modal_size: @base_size + @gp_game_window_wmax;
     width: @modal_size;
     margin-left: -@modal_size / 2;
+    .game-page-body{
+      height: @gp_game_window_hmax + @gp_panel_top_h;
+    }
+
     .game-window{
       width: @gp_game_window_wmax + 2 * @gp_padding;
-      height: @gp_game_window_hmax + @gp_panel_top_h;
     }
   }
   @media (max-width: @modal_max_w) {
     @modal_size: @base_size + @gp_game_window_wmin;
     width: @modal_size;
     margin-left: -@modal_size / 2;
+    .game-page-body{
+      height: @gp_game_window_hmin + @gp_panel_top_h;
+    }
     .game-window{
       width: @gp_game_window_wmin + 2 * @gp_padding;
-      height: @gp_game_window_hmin + @gp_panel_top_h;
     }
   }
 
   overflow: hidden;
   background: #11729f;
   .game-page-body{
-    height: 600px;
     padding: 0px;
     > div {
       float: left;
       height: 100%;
       border-right: 1px solid #115579;
+      position:relative;
       .top {
         .gradient(top, #12a1ca, #11729f);
         height: @gp_panel_top_h;
@@ -140,12 +145,55 @@ body {
         text-align: center;
         line-height: @gp_panel_top_h;
         font-weight: bold;
+        postion: relative;
+        .game-name{
+          position: absolute;
+          left:@gp_panel_top_h;
+          right: 3 * @gp_panel_top_h;
+          top:0px;
+        }
+        .typicn{
+          width: @gp_panel_top_h;
+          position: absolute;
+          top:0px;
+          height: @gp_panel_top_h;
+          text-decoration:  none;
+        }
+        .typicn:before{
+          font-size: 33px;
+          vertical-align: middle;
+        }
+        .typicn:hover{
+          .gradient(top, #11729f, #12a1ca);
+        }
+        .previous{
+          left:0px;
+          border-right: 1px solid #115579;
+          color: #ffff00;
+        }
+        .thumbsUp{
+          right:@gp_panel_top_h*2;
+          border-left: 1px solid #115579;
+          color: #25dd45;
+        }
+        .thumbsDown{
+          right:@gp_panel_top_h;
+          border-left: 1px solid #115579;
+          color: #dd5731;
+        }
+        .heart{
+          right:0px;
+          border-left: 1px solid #115579;
+          color: #ee4270;
+        }
       }
       .panel-content{
         padding: @gp_padding;
-        height: 100%;
-        width: 100%;
-        padding-top: @gp_panel_top_h + @gp_padding;
+        position: absolute;
+        top:@gp_panel_top_h;
+        right:0px;
+        left:0px;
+        bottom:0px;
       }
     }
     .games-list {
@@ -159,7 +207,9 @@ body {
 }
 
 
-
+.modal-backdrop {
+  margin-top:64px;
+}
 
 
 
@@ -246,6 +296,14 @@ body {
   background-image: -o-linear-gradient(@origin, @start, @stop);
   background-image: -ms-linear-gradient(@origin, @start, @stop);
   background-image: linear-gradient(@origin, @start, @stop);
+}
+
+.scale(@ratio) {
+  -webkit-transform: scale(@ratio);
+  -moz-transform: scale(@ratio);
+  -ms-transform: scale(@ratio);
+  -o-transform: scale(@ratio);
+  transform: scale(@ratio);
 }
 
 

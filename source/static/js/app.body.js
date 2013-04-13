@@ -16,6 +16,8 @@ Game = (function(_super) {
     picnum = Math.floor(Math.random() * 3) + 1;
     this.thumbnail = '/static/img/thumb150_' + picnum + '.jpg';
     this.name = 'Default game name';
+    this.link = 'default-game-name';
+    this.swf_link = 'game/swf/link.swf';
   };
 
   return Game;
@@ -80,9 +82,45 @@ AppView = (function(_super) {
 
 })(Backbone.View);
 
-var GameView, _ref,
+var GameView, gameBoxTmplStr, gamePageTmplStr, gameboxFn, gamepageFn, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+gamePageTmplStr = '<div class="game-page-body">\
+  <div class="games-list popular">\
+    <div class="top">Popular games</div>\
+    <div class="panel-content"></div>\
+  </div>\
+  <div class="game-window">\
+    <div class="top">\
+      <a href="/" class="typicn previous"></a>\
+      <span class="game-name">{{=it.name}}</span>\
+      <a href="#" class="typicn thumbsUp"></a>\
+      <a href="#" class="typicn thumbsDown"></a>\
+      <a href="#" class="typicn heart"></a>\
+    </div>\
+    <div class="panel-content">{{=it.swf_link}}</div>\
+  </div>\
+  <div class="games-list similar">\
+    <div class="top">Similar games</div>\
+    <div class="panel-content"></div>\
+  </div>\
+  <div class="ad">\
+    <div class="top">Advertisment</div>\
+    <div class="panel-content"></div>\
+  </div>\
+</div>';
+
+gamepageFn = doT.template(gamePageTmplStr, void 0, {});
+
+gameBoxTmplStr = '<div class="game">\
+  <a href="/games/{{=it.link}}">\
+    <img class="thumb" src="{{=it.thumbnail}}">\
+    <div class="name">{{=it.name}}</div>\
+  </a>\
+</div>';
+
+gameboxFn = doT.template(gameBoxTmplStr, void 0, {});
 
 GameView = (function(_super) {
   __extends(GameView, _super);
@@ -96,13 +134,23 @@ GameView = (function(_super) {
 
   GameView.prototype.className = "game";
 
+  GameView.prototype.events = {
+    'click a': 'renderGamePage'
+  };
+
   GameView.prototype.initialize = function(game) {
     return this.model = game;
   };
 
   GameView.prototype.render = function() {
-    $(this.el).append("<a href='#GamePopup' role='button' data-toggle='modal'><img class='thumb' src='" + this.model.thumbnail + "'><div class='name'>" + this.model.name + " " + this.model.name + " " + this.model.name + "</div></a>");
-    return this.el;
+    return gameboxFn(this.model);
+    return this.delegateEvents();
+  };
+
+  GameView.prototype.renderGamePage = function() {
+    console.log("RENDER");
+    $("#GamePage").html(gamepageFn(this.model));
+    return false;
   };
 
   return GameView;
@@ -147,7 +195,7 @@ GamesView = (function(_super) {
 
   GamesView.prototype.render = function() {
     this.collection.forEach(function(game) {
-      return this.renderNewGame(game);
+      return this.appendGame(game);
     });
     return this.el;
   };
@@ -157,6 +205,7 @@ GamesView = (function(_super) {
 
     gameview = new GameView(game);
     $(this.el).append(gameview.render());
+    gameview.delegateEvents();
     return this.el;
   };
 
@@ -203,4 +252,21 @@ $(function() {
     $(window).resize(center_games);
     return setTimeout(center_games, 200);
   });
+  /*
+  $("body").delegate "a", "click", ()->
+    href = $(@).attr("href");
+  
+    if href=="/"
+      $("#GamePage").modal 'hide'
+      history.back()
+      return false
+      #else if href.match(/\/games\//)
+      #console.log "it is a game"
+      #history.pushState null, null, href
+      #$("#GamePage").modal 'show'
+      return false
+    else
+      return true
+  */
+
 });
