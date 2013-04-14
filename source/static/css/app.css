@@ -52,6 +52,26 @@ body {
   margin-top: 5px;
   margin-left: 6px;
 }
+.search-bar .search-query {
+  background-color: #115579;
+  color: white;
+  border: none;
+  height: 34px;
+  padding-right: 44px;
+  width: 206px;
+  border-radius: 40px;
+  -moz-border-radius: 40px;
+  -webkit-border-radius: 40px;
+}
+.search-bar a.search-icon {
+  width: 40px;
+  height: 40px;
+  position: absolute !important;
+  right: 0px;
+  left: auto !important;
+  top: 1px;
+  margin-right: 0px !important;
+}
 .content {
   padding: 68px 4px 0px 4px;
 }

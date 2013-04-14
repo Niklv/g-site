@@ -74,6 +74,29 @@ body {
   }
 }
 
+.search-bar {
+  .search-query {
+    background-color: #115579;
+    color:white;
+    border: none;
+    height: 34px;
+    padding-right: 44px;
+    width: 206px;
+    .border-radius(40px);
+  }
+  a.search-icon {
+    width: 40px;
+    height: 40px;
+    position: absolute !important;
+    right: 0px;
+    left: auto !important;
+    top: 1px;
+    margin-right: 0px !important;;
+  }
+}
+
+
+
 .content{
   padding: 68px @game_img_padding 0px @game_img_padding;
 }
@@ -287,6 +310,13 @@ body {
 .border-box () {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
+}
+
+
+.border-radius(@radius: 5px) {
+  border-radius: @radius;
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
 }
 
 .gradient (@origin: top, @start: #ffffff, @stop: #ffffff) {
