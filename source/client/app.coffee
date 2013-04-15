@@ -32,7 +32,7 @@ class App extends Backbone.Router
   index:()->
     @gamePageView.$el.modal 'hide'
   gamepage: (game_link)->
-    @gamePageView.model = @games.find (game)-> return game.link == game_link
+    @gamePageView.model = @games.find (game)-> return game.get("link") == game_link
     @gamePageView.render().modal 'show'
 
 $ () ->
@@ -51,33 +51,16 @@ $ () ->
       app.navigate uri, {trigger:true}
       return false
 
-  ###
-  _.extend $.fn.typeahead.Constructor::,
-    render: (items) ->
-      that = this
-      if items? and items[0] instanceof Game
-        items = $(items).map (i, item) ->
-          i = $(that.options.item).attr("data-value", item.link)
-          i.html that.highlighter(item)
-          i[0]
-      else
-        items = $(items).map (i, item) ->
-          i = $(that.options.item).attr("data-value", item)
-          i.find("a").html that.highlighter(item)
-          i[0]
-      items.first().addClass "active"
-      @$menu.html items
-      this
-  ###
-
   $('.search-bar .search-query').typeahead
-    items: 6
-    source: (query, process)-> process app.games.search(query)
+    source: (query, process)-> return app.games.search(query)
     matcher: ()-> true
-    sorter: (items)-> items
+    sorter: (items)->
+      items
     highlighter: (game)->
       gv = new GameView {model:game}
-      return gv.render().html()
-    updater: (itemString) ->
+      return gv.render()
+    updater: (itemString) =>
       item = JSON.parse(itemString)
-      App.navigate item.link, {trigger:true}
+      app.navigate '/games/'+item.link, {trigger:true}
+      return
+    items: 10

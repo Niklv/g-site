@@ -14,10 +14,10 @@ Game = (function(_super) {
     var picnum;
 
     picnum = Math.floor(Math.random() * 3) + 1;
-    this.thumbnail = '/static/img/thumb150_' + picnum + '.jpg';
-    this.name = 'Default game name';
-    this.link = 'default-game-name';
-    this.swf_link = 'game/swf/link.swf';
+    this.set("thumbnail", '/static/img/thumb150_' + picnum + '.jpg');
+    this.set("name", 'Default game name');
+    this.set("link", 'default-game-link');
+    this.set("swf_link", 'game/swf/link.swf');
   };
 
   return Game;
@@ -55,16 +55,16 @@ GamesCollection = (function(_super) {
   GamesCollection.prototype.search = function(query) {
     return _.map(this.models, function(item) {
       item.toString = function() {
-        return JSON.stringify(this);
+        return JSON.stringify(item.toJSON());
       };
       item.toLowerCase = function() {
-        return this.name.toLowerCase();
+        return item.name.toLowerCase();
       };
       item.indexOf = function(string) {
-        return String.prototype.indexOf.apply(this.name, arguments);
+        return String.prototype.indexOf.apply(item.name, arguments);
       };
       item.replace = function(string) {
-        return String.prototype.replace.apply(this.name, arguments);
+        return String.prototype.replace.apply(item.name, arguments);
       };
       return item;
     });
@@ -122,7 +122,7 @@ GamePageView = (function(_super) {
   };
 
   GamePageView.prototype.render = function() {
-    this.$el.html(this.template(this.model));
+    this.$el.html(this.template(this.model.toJSON()));
     return this.$el;
   };
 
@@ -167,7 +167,7 @@ GameView = (function(_super) {
   GameView.prototype.template = doT.template(GameView.prototype.templateStr, void 0, {});
 
   GameView.prototype.render = function() {
-    this.$el.append(this.template(this.model));
+    this.$el.append(this.template(this.model.toJSON()));
     return this.$el;
   };
 
@@ -300,7 +300,7 @@ App = (function(_super) {
 
   App.prototype.gamepage = function(game_link) {
     this.gamePageView.model = this.games.find(function(game) {
-      return game.link === game_link;
+      return game.get("link") === game_link;
     });
     return this.gamePageView.render().modal('show');
   };
@@ -310,7 +310,8 @@ App = (function(_super) {
 })(Backbone.Router);
 
 $(function() {
-  var app;
+  var app,
+    _this = this;
 
   app = new App();
   $(window).resize(app.center_games);
@@ -336,29 +337,9 @@ $(function() {
       return false;
     }
   });
-  /*
-  _.extend $.fn.typeahead.Constructor::,
-    render: (items) ->
-      that = this
-      if items? and items[0] instanceof Game
-        items = $(items).map (i, item) ->
-          i = $(that.options.item).attr("data-value", item.link)
-          i.html that.highlighter(item)
-          i[0]
-      else
-        items = $(items).map (i, item) ->
-          i = $(that.options.item).attr("data-value", item)
-          i.find("a").html that.highlighter(item)
-          i[0]
-      items.first().addClass "active"
-      @$menu.html items
-      this
-  */
-
   return $('.search-bar .search-query').typeahead({
-    items: 6,
     source: function(query, process) {
-      return process(app.games.search(query));
+      return app.games.search(query);
     },
     matcher: function() {
       return true;
@@ -369,20 +350,19 @@ $(function() {
     highlighter: function(game) {
       var gv;
 
-      console.log(game);
       gv = new GameView({
         model: game
       });
-      console.log(gv.render().html());
-      return gv.render().html();
+      return gv.render();
     },
     updater: function(itemString) {
       var item;
 
       item = JSON.parse(itemString);
-      return App.navigate(item.link, {
+      app.navigate('/games/' + item.link, {
         trigger: true
       });
-    }
+    },
+    items: 10
   });
 });

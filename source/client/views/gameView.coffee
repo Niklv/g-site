@@ -9,7 +9,7 @@ class GameView extends Backbone.View
   template: doT.template @::templateStr, undefined, {}
 
   render: ()=>
-    @$el.append @template @model
+    @$el.append @template @model.toJSON()
     return @$el
 
 

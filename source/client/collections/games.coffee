@@ -16,11 +16,11 @@ class GamesCollection extends Backbone.Collection
   search: (query)->
     return _.map @models, (item)->
       item.toString = ()->
-        JSON.stringify @
+        JSON.stringify item.toJSON()
       item.toLowerCase = ()->
-        @name.toLowerCase()
+        item.name.toLowerCase()
       item.indexOf = (string) ->
-        String::indexOf.apply @name, arguments
+        String::indexOf.apply item.name, arguments
       item.replace = (string) ->
-        String::replace.apply @name, arguments
+        String::replace.apply item.name, arguments
       return item

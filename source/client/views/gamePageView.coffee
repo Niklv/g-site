@@ -31,7 +31,7 @@ class GamePageView extends Backbone.View
     'click .thumbsDown': 'thumbsDown'
   }
   render: ()->
-    @$el.html @template @model
+    @$el.html @template @model.toJSON()
     return @$el
 
   like: ()->

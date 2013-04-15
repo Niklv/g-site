@@ -363,13 +363,13 @@ body {
   padding: 5px;
   width: 100%;
 }
-.typeahead.dropdown-menu li > a .thumb {
+.typeahead.dropdown-menu li > a .game .thumb {
   margin: 0px 5px 0px 0px !important;
   height: 70px;
   width: 70px;
   float: left;
 }
-.typeahead.dropdown-menu li > a .name {
+.typeahead.dropdown-menu li > a .game .name {
   margin: 0px !important;
   vertical-align: middle;
 }
@@ -489,5 +489,5 @@ body {
   border-right: none;
 }
 .modal-backdrop {
-  margin-top: 64px;
+  top: 64px;
 }
