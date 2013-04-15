@@ -52,6 +52,24 @@ GamesCollection = (function(_super) {
   */
 
 
+  GamesCollection.prototype.search = function(query) {
+    return _.map(this.models, function(item) {
+      item.toString = function() {
+        return JSON.stringify(this);
+      };
+      item.toLowerCase = function() {
+        return this.name.toLowerCase();
+      };
+      item.indexOf = function(string) {
+        return String.prototype.indexOf.apply(this.name, arguments);
+      };
+      item.replace = function(string) {
+        return String.prototype.replace.apply(this.name, arguments);
+      };
+      return item;
+    });
+  };
+
   return GamesCollection;
 
 })(Backbone.Collection);
@@ -125,6 +143,7 @@ GamePageView = (function(_super) {
 })(Backbone.View);
 
 var GameView, _ref,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -132,7 +151,7 @@ GameView = (function(_super) {
   __extends(GameView, _super);
 
   function GameView() {
-    _ref = GameView.__super__.constructor.apply(this, arguments);
+    this.render = __bind(this.render, this);    _ref = GameView.__super__.constructor.apply(this, arguments);
     return _ref;
   }
 
@@ -299,7 +318,7 @@ $(function() {
   Backbone.history.start({
     pushState: true
   });
-  return $(document).delegate("a", "click", function(e) {
+  $(document).delegate("a", "click", function(e) {
     var href, uri;
 
     if (e.currentTarget.getAttribute("nobackbone")) {
@@ -315,6 +334,55 @@ $(function() {
         trigger: true
       });
       return false;
+    }
+  });
+  /*
+  _.extend $.fn.typeahead.Constructor::,
+    render: (items) ->
+      that = this
+      if items? and items[0] instanceof Game
+        items = $(items).map (i, item) ->
+          i = $(that.options.item).attr("data-value", item.link)
+          i.html that.highlighter(item)
+          i[0]
+      else
+        items = $(items).map (i, item) ->
+          i = $(that.options.item).attr("data-value", item)
+          i.find("a").html that.highlighter(item)
+          i[0]
+      items.first().addClass "active"
+      @$menu.html items
+      this
+  */
+
+  return $('.search-bar .search-query').typeahead({
+    items: 6,
+    source: function(query, process) {
+      return process(app.games.search(query));
+    },
+    matcher: function() {
+      return true;
+    },
+    sorter: function(items) {
+      return items;
+    },
+    highlighter: function(game) {
+      var gv;
+
+      console.log(game);
+      gv = new GameView({
+        model: game
+      });
+      console.log(gv.render().html());
+      return gv.render().html();
+    },
+    updater: function(itemString) {
+      var item;
+
+      item = JSON.parse(itemString);
+      return App.navigate(item.link, {
+        trigger: true
+      });
     }
   });
 });

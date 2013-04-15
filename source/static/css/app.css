@@ -351,6 +351,31 @@ body {
 #games .game > a:hover .name {
   bottom: 0px;
 }
+.typeahead.dropdown-menu {
+  padding: 0;
+  overflow: hidden;
+  width: 220px;
+  left: 12px !important;
+}
+.typeahead.dropdown-menu li > a {
+  margin: 0px !important;
+  border-bottom: 1px solid gray;
+  padding: 5px;
+  width: 100%;
+}
+.typeahead.dropdown-menu li > a .thumb {
+  margin: 0px 5px 0px 0px !important;
+  height: 70px;
+  width: 70px;
+  float: left;
+}
+.typeahead.dropdown-menu li > a .name {
+  margin: 0px !important;
+  vertical-align: middle;
+}
+.typeahead.dropdown-menu li > a.active .name {
+  color: #FFF;
+}
 #GamePage {
   overflow: hidden;
   background: #11729f;

@@ -123,6 +123,32 @@ body {
   .game()
 }
 
+.typeahead.dropdown-menu {
+  padding:0;
+  overflow:hidden;
+  width:220px;
+  left:12px !important;
+  li > a {
+    margin:0px !important;
+    border-bottom:1px solid gray;
+    padding: 5px;
+    width:100%;
+    .thumb {
+      margin:0px 5px 0px 0px !important;
+      height:70px;
+      width:70px;
+      float:left;
+    }
+    .name {
+      margin:0px !important;
+      vertical-align:middle;
+    }
+  }
+  li > a.active .name {
+    color:#FFF;
+  }
+}
+
 #GamePage{
 
   @base_size: 2 * @gp_games_list_w + @gp_ad_w + 8 * @gp_padding + 3;
