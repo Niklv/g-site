@@ -13,6 +13,9 @@ class GamesCollection extends Backbone.Collection
   ###
 
   #get from server by name
+  popular: ()->
+    return [new Game, new Game, new Game, new Game, new Game, new Game]
+
   search: (query)->
     return _.map @models, (item)->
       item.toString = ()->

@@ -32,6 +32,7 @@ class App extends Backbone.Router
   index:()->
     @gamePageView.$el.modal 'hide'
   gamepage: (game_link)->
+    #fetch from server by game_link
     @gamePageView.model = @games.find (game)-> return game.get("link") == game_link
     @gamePageView.render().modal 'show'
 

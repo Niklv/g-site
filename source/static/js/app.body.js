@@ -10,14 +10,18 @@ Game = (function(_super) {
     return _ref;
   }
 
+  Game.prototype.idAttribute = "_id";
+
   Game.prototype.initialize = function() {
     var picnum;
 
     picnum = Math.floor(Math.random() * 3) + 1;
+    this.set("_id", Math.floor(Math.random() * 1000000));
     this.set("thumbnail", '/static/img/thumb150_' + picnum + '.jpg');
-    this.set("name", 'Default game name');
-    this.set("link", 'default-game-link');
+    this.set("name", 'Default game name ' + this.get("_id"));
+    this.set("link", 'default-game-link-' + this.get("_id"));
     this.set("swf_link", 'game/swf/link.swf');
+    this.set("similar", [Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000)]);
   };
 
   return Game;
@@ -51,6 +55,10 @@ GamesCollection = (function(_super) {
     return parm
   */
 
+
+  GamesCollection.prototype.popular = function() {
+    return [new Game, new Game, new Game, new Game, new Game, new Game];
+  };
 
   GamesCollection.prototype.search = function(query) {
     return _.map(this.models, function(item) {
@@ -89,29 +97,32 @@ GamePageView = (function(_super) {
   GamePageView.prototype.id = "GamePage";
 
   GamePageView.prototype.templateStr = '<div class="game-page-body">\
-    <div class="games-list popular">\
-      <div class="top">Popular games</div>\
-      <div class="panel-content"></div>\
-    </div>\
-    <div class="game-window">\
-      <div class="top">\
-        <a href="/" class="typicn previous"></a>\
-        <span class="game-name">{{=it.name}}</span>\
-        <a href="#" class="typicn thumbsUp"></a>\
-        <a href="#" class="typicn thumbsDown"></a>\
-        <a href="#" class="typicn heart"></a>\
-      </div>\
-      <div class="panel-content">{{=it.swf_link}}</div>\
-    </div>\
-    <div class="games-list similar">\
-      <div class="top">Similar games</div>\
-      <div class="panel-content"></div>\
-    </div>\
-    <div class="ad">\
-      <div class="top">Advertisment</div>\
-      <div class="panel-content"></div>\
-    </div>\
-  </div>';
+        <div class="games-list popular">\
+          <div class="top">Popular games</div>\
+          <div class="panel-content">{{~it.similar :value}}{{=value}}{{~}}</div>\
+        </div>\
+        <div class="game-window">\
+          <div class="top">\
+            <a href="/" class="typicn previous"></a>\
+            <span class="game-name">{{=it.name}}</span>\
+            <a href="#" class="typicn thumbsUp"></a>\
+            <a href="#" class="typicn thumbsDown"></a>\
+            <a href="#" class="typicn heart"></a>\
+          </div>\
+          <div class="panel-content">{{=it.swf_link}}</div>\
+        </div>\
+        <div class="games-list similar">\
+          <div class="top">Similar games</div>\
+          <div class="panel-content">{{~it.similar :value}}{{=value}}{{~}}\
+          </div>\
+        </div>\
+        <div class="ad">\
+          <div class="top">Advertisment</div>\
+          <div class="panel-content"></div>\
+        </div>\
+      </div>{{ for(var prop in it) { }}\
+  <div>{{=prop}}</div>\
+  {{ } }}';
 
   GamePageView.prototype.template = doT.template(GamePageView.prototype.templateStr, void 0, {});
 
@@ -122,7 +133,24 @@ GamePageView = (function(_super) {
   };
 
   GamePageView.prototype.render = function() {
-    this.$el.html(this.template(this.model.toJSON()));
+    var context;
+
+    console.log(this.template);
+    console.log(this.model);
+    context = this.model.toJSON();
+    context.similar = _.map(context.similar, function(similar_id) {
+      var g, gv;
+
+      g = new Game({
+        _id: similar_id
+      });
+      gv = new GameView({
+        model: g
+      });
+      return gv.render().html();
+    });
+    console.log(context);
+    this.$el.html(this.template, context);
     return this.$el;
   };
 

@@ -124,20 +124,28 @@ body {
 }
 
 .typeahead.dropdown-menu {
+  .drop-shadow(2px, 1px, 2px, 0, 0.35);
   padding:0;
   overflow:hidden;
   width:220px;
   left:12px !important;
+  .border-radius(9px);
   li > a {
     margin:0px !important;
-    border-bottom:1px solid gray;
     padding: 5px;
     width:100%;
+    .gradient(top, #12a1ca, #11729f);
+    &:hover {
+      .gradient(top, #00D6FF,#008FFF);
+    }
     .game{
+      a{
+        color: #FFF;
+      }
       .thumb {
         margin:0px 5px 0px 0px !important;
-        height:70px;
-        width:70px;
+        height:40px;
+        width:40px;
         float:left;
       }
       .name {
@@ -146,8 +154,8 @@ body {
       }
     }
   }
-  li > a.active .name {
-    color:#FFF;
+  li:last-child>a{
+    //border:none;
   }
 }
 
@@ -371,4 +379,10 @@ body {
   -moz-transition: @arguments;
   -o-transition: @arguments;
   -ms-transition: @arguments;
+}
+
+.drop-shadow (@x: 0, @y: 1px, @blur: 2px, @spread: 0, @alpha: 0.25) {
+  -webkit-box-shadow:	@x @y @blur @spread rgba(0, 0, 0, @alpha);
+  -moz-box-shadow:	@x @y @blur @spread rgba(0, 0, 0, @alpha);
+  box-shadow:		@x @y @blur @spread rgba(0, 0, 0, @alpha);
 }
