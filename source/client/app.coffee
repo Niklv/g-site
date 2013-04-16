@@ -31,10 +31,17 @@ class App extends Backbone.Router
 
   index:()->
     @gamePageView.$el.modal 'hide'
+    @gamePageView.deleteSwfObject()
   gamepage: (game_link)->
-    #fetch from server by game_link
-    @gamePageView.model = @games.find (game)-> return game.get("link") == game_link
+    #fetch from server by game_link, but for this moment we just create new one
+    id = game_link.split "-"
+    id = id[id.length-1]
+    @gamePageView.model = new Game()
+    @gamePageView.model.twin id
+    @gamePageView.model.set "link", game_link
+    #@gamePageView.model = @games.find (game)-> return game.get("link") == game_link
     @gamePageView.render().modal 'show'
+    @gamePageView.setupSwfObject()
 
 $ () ->
   app = new App()

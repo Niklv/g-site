@@ -18,10 +18,18 @@ Game = (function(_super) {
     picnum = Math.floor(Math.random() * 3) + 1;
     this.set("_id", Math.floor(Math.random() * 1000000));
     this.set("thumbnail", '/static/img/thumb150_' + picnum + '.jpg');
-    this.set("name", 'Default game name ' + this.get("_id"));
+    this.set("name", 'This is long default game name with number ' + this.get("_id"));
     this.set("link", 'default-game-link-' + this.get("_id"));
-    this.set("swf_link", 'game/swf/link.swf');
+    this.set("swf_link", 'http://www.mousebreaker.com/games/parking/INSKIN__parking-v1.1_Secure.swf');
     this.set("similar", [Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000)]);
+  };
+
+  Game.prototype.twin = function(id) {
+    this.set("_id", id);
+    this.set("name", 'This is long default game name with number ' + this.get("_id"));
+    this.set("link", 'default-game-link-' + this.get("_id"));
+    this.set("swf_link", 'http://www.mousebreaker.com/games/parking/INSKIN__parking-v1.1_Secure.swf');
+    return this.set("similar", [Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000)]);
   };
 
   return Game;
@@ -109,7 +117,15 @@ GamePageView = (function(_super) {
             <a href="#" class="typicn thumbsDown"></a>\
             <a href="#" class="typicn heart"></a>\
           </div>\
-          <div class="panel-content">{{=it.swf_link}}</div>\
+          <div class="panel-content">\
+            <div id="swf-game-wrapper">\
+              <p>\
+                <a href="http://www.adobe.com/go/getflashplayer">\
+                  <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />\
+                </a>\
+              </p>\
+            </div>\
+          </div>\
         </div>\
         <div class="games-list similar">\
           <div class="top">Similar games</div>\
@@ -120,11 +136,11 @@ GamePageView = (function(_super) {
           <div class="top">Advertisment</div>\
           <div class="panel-content"></div>\
         </div>\
-      </div>{{ for(var prop in it) { }}\
-  <div>{{=prop}}</div>\
-  {{ } }}';
+      </div>';
 
   GamePageView.prototype.template = doT.template(GamePageView.prototype.templateStr, void 0, {});
+
+  GamePageView.prototype.swfObject = null;
 
   GamePageView.prototype.events = {
     'click .heart': 'like',
@@ -135,9 +151,8 @@ GamePageView = (function(_super) {
   GamePageView.prototype.render = function() {
     var context;
 
-    console.log(this.template);
-    console.log(this.model);
     context = this.model.toJSON();
+    context.similar = context.similar.slice(0, 5);
     context.similar = _.map(context.similar, function(similar_id) {
       var g, gv;
 
@@ -147,11 +162,18 @@ GamePageView = (function(_super) {
       gv = new GameView({
         model: g
       });
-      return gv.render().html();
+      return gv.render()[0].outerHTML;
     });
-    console.log(context);
-    this.$el.html(this.template, context);
+    this.$el.html(this.template(context));
     return this.$el;
+  };
+
+  GamePageView.prototype.setupSwfObject = function() {
+    return swfobject.embedSWF(this.model.get("swf_link"), "swf-game-wrapper", "100%", "100%", "9.0.0");
+  };
+
+  GamePageView.prototype.deleteSwfObject = function() {
+    return swfobject.removeSWF("swf-game-wrapper");
   };
 
   GamePageView.prototype.like = function() {
@@ -323,14 +345,20 @@ App = (function(_super) {
   App.prototype.init = function() {};
 
   App.prototype.index = function() {
-    return this.gamePageView.$el.modal('hide');
+    this.gamePageView.$el.modal('hide');
+    return this.gamePageView.deleteSwfObject();
   };
 
   App.prototype.gamepage = function(game_link) {
-    this.gamePageView.model = this.games.find(function(game) {
-      return game.get("link") === game_link;
-    });
-    return this.gamePageView.render().modal('show');
+    var id;
+
+    id = game_link.split("-");
+    id = id[id.length - 1];
+    this.gamePageView.model = new Game();
+    this.gamePageView.model.twin(id);
+    this.gamePageView.model.set("link", game_link);
+    this.gamePageView.render().modal('show');
+    return this.gamePageView.setupSwfObject();
   };
 
   return App;
