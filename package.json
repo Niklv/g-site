@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "dependencies": {
     "express": "2.5.x",
-    "dot" : "1.x.x"
+    "dot" : "1.x.x",
+    "mongoose": "3.5.x"
   },
   "devDependencies": {
     "grunt": "0.4.x",
