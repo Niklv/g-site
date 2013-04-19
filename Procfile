@@ -1,1 +1,1 @@
-web: coffee server.coffee
+web: coffee source/server/app.coffee
