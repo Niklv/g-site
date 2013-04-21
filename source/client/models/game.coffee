@@ -1,4 +1,5 @@
 class Game extends Backbone.Model
+  urlRoot: '/api/v1.alpha/games'
   idAttribute: "_id"
   initialize: ()->
     picnum = Math.floor(Math.random() * 3) + 1
