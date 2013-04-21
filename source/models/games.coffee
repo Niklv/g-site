@@ -51,7 +51,14 @@ Games.statics.get = (req, res)->
         res.json err:err
   else
     #do there pagination
-    res.json err:"wrong game slug"
+    @find {}, (err, games)=>
+      unless err?
+        if games?
+          res.json games
+        else
+          res.json err:"games not found"
+      else
+        res.json err:err
 
 exports.model = mongoose.model 'games', Games
 exports.methods = ["get","post","delete","put","patch"]

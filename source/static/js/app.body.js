@@ -10,6 +10,8 @@ Game = (function(_super) {
     return _ref;
   }
 
+  Game.prototype.urlRoot = '/api/v1.alpha/games';
+
   Game.prototype.idAttribute = "_id";
 
   Game.prototype.initialize = function() {
@@ -17,18 +19,18 @@ Game = (function(_super) {
 
     picnum = Math.floor(Math.random() * 3) + 1;
     this.set("_id", Math.floor(Math.random() * 1000000));
-    this.set("thumbnail", '/static/img/thumb150_' + picnum + '.jpg');
-    this.set("name", 'This is long default game name with number ' + this.get("_id"));
-    this.set("link", 'default-game-link-' + this.get("_id"));
-    this.set("swf_link", 'http://www.mousebreaker.com/games/parking/INSKIN__parking-v1.1_Secure.swf');
+    this.set("image_url", '/static/img/thumb150_' + picnum + '.jpg');
+    this.set("title", 'This is long default game name with number ' + this.get("_id"));
+    this.set("slug", 'default-game-link-' + this.get("_id"));
+    this.set("swf_url", 'http://www.mousebreaker.com/games/parking/INSKIN__parking-v1.1_Secure.swf');
     this.set("similar", [Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000)]);
   };
 
   Game.prototype.twin = function(id) {
     this.set("_id", id);
-    this.set("name", 'This is long default game name with number ' + this.get("_id"));
-    this.set("link", 'default-game-link-' + this.get("_id"));
-    this.set("swf_link", 'http://www.mousebreaker.com/games/parking/INSKIN__parking-v1.1_Secure.swf');
+    this.set("title", 'This is long default game name with number ' + this.get("_id"));
+    this.set("slug", 'default-game-link-' + this.get("_id"));
+    this.set("swf_url", 'http://www.mousebreaker.com/games/parking/INSKIN__parking-v1.1_Secure.swf');
     return this.set("similar", [Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000)]);
   };
 
@@ -48,9 +50,9 @@ GamesCollection = (function(_super) {
     return _ref;
   }
 
-  GamesCollection.prototype.model = Game;
+  GamesCollection.prototype.url = '/api/v1.alpha/games';
 
-  GamesCollection.prototype.url = '/games';
+  GamesCollection.prototype.model = Game;
 
   /*
   fetch : ()->
@@ -63,6 +65,16 @@ GamesCollection = (function(_super) {
     return parm
   */
 
+
+  GamesCollection.prototype.initialize = function() {
+    var _this = this;
+
+    return this.fetch({
+      success: function() {
+        return console.log(_this.models);
+      }
+    });
+  };
 
   GamesCollection.prototype.popular = function() {
     return [new Game, new Game, new Game, new Game, new Game, new Game];

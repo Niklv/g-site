@@ -1,6 +1,6 @@
 class GamesCollection extends Backbone.Collection
+  url: '/api/v1.alpha/games'
   model : Game
-  url: '/games'
   ###
   fetch : ()->
     console.log "fetch!"
@@ -11,6 +11,12 @@ class GamesCollection extends Backbone.Collection
     parm = Backbone.Collection.prototype.fetch.call this
     return parm
   ###
+
+
+  initialize: ()->
+    @fetch
+      success: ()=>
+        console.log @models
 
   #get from server by name
   popular: ()->
