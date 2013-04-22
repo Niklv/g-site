@@ -3,6 +3,7 @@ express   = require 'express'
 mongoose  = require 'mongoose'
 walk      = require 'walk'
 fs        = require 'fs'
+index     = require './views/index'
 #games = require './models/games'
 
 
@@ -31,7 +32,7 @@ startServer = ()->
     app.listen port, ()->
       console.log "Listening on " + port
 
-
+    app.get "/", index
 
 
 

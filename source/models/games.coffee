@@ -34,6 +34,24 @@ Games = new Schema
 
 
 Games.statics.get = (req, res)->
+  ###
+  game_rnd = Math.floor(Math.random() * 100000000)
+  picnum = Math.floor(Math.random() * 3) + 1
+  @insert
+    title: "Game " + game_rnd
+    description: "description for game "+game_rnd
+    slug: "game_slug_" + game_rnd
+    image_url: '/static/img/thumb150_' + picnum + '.jpg'
+    swf_url: 'http://www.mousebreaker.com/games/parking/INSKIN__parking-v1.1_Secure.swf'
+    , ()-> return
+
+
+
+
+
+
+
+  ###
   {id} = req.params
   {page, size} = req.query
   if id?
@@ -59,6 +77,25 @@ Games.statics.get = (req, res)->
           res.json err:"games not found"
       else
         res.json err:err
+
+
+
+i = 0
+while i<2
+
+  game_rnd = Math.floor(Math.random() * 100000000)
+  picnum = Math.floor(Math.random() * 3) + 1
+  g = new (mongoose.model 'games', Games)
+  g.title = "Game " + game_rnd
+  g.description = "description for game "+game_rnd
+  g.slug = "game_slug_" + game_rnd
+  g.image_url = '/static/img/thumb150_' + picnum + '.jpg'
+  g.swf_url = 'http://www.mousebreaker.com/games/parking/INSKIN__parking-v1.1_Secure.swf'
+  console.log g
+  #g.save()
+  i++
+
+
 
 exports.model = mongoose.model 'games', Games
 exports.methods = ["get","post","delete","put","patch"]

@@ -221,9 +221,9 @@ GameView = (function(_super) {
 
   GameView.prototype.className = "game";
 
-  GameView.prototype.templateStr = '<a href="/games/{{=it.link}}">\
-      <img class="thumb" src="{{=it.thumbnail}}">\
-      <div class="name">{{=it.name}}</div>\
+  GameView.prototype.templateStr = '<a href="/games/{{=it.slug}}">\
+      <img class="thumb" src="{{=it.image_url}}">\
+      <div class="name">{{=it.title}}</div>\
     </a>';
 
   GameView.prototype.template = doT.template(GameView.prototype.templateStr, void 0, {});
