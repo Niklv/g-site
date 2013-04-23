@@ -15,32 +15,23 @@ class App extends Backbone.Router
       @add game
     , @games
 
-
-
-
-
     @gamesView = new GamesView {collection:@games}
     @gamePageView = new GamePageView()
     @initFullScreen()
 
   #center games div
   center_games: ()=>
-    #@initFullScreen() #for situation from tiny to large screen resize
-    #margin = ($(window).width() - $("#games").width() - 10)/2
-    #if margin>40 then margin = 0
-    #$(".content").css "margin-left", margin
+    if $("body").height() < $(window).height() then @initFullScreen() #for situation from tiny to large screen resize
+    margin = ($(window).width() - $("#games").width() - 10)/2
+    if margin>40 then margin = 0
+    $(".content").css "margin-left", margin
 
   #Init full screen of games, toolbar must appear
   initFullScreen: ()=>
-    #if $("body").height() > $(window).height() then return
-    ###
-    i = 0
-    while i<50
-      @games.add new Game()
-      i++
-
+    $(window).scroll()
+    if $("body").height() > $(window).height() then return
     setTimeout @initFullScreen, 100
-    ###
+
 
   routes:{
     "games/:game_link": "gamepage"
@@ -71,8 +62,8 @@ class App extends Backbone.Router
 
 $ () ->
   app = new App()
-  #$(window).resize app.center_games
-  #setTimeout app.center_games, 200
+  $(window).resize app.center_games
+  setTimeout app.center_games, 200
 
   Backbone.history.start {pushState: true}
   $(document).delegate "a", "click", (e)->

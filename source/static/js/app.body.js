@@ -251,22 +251,14 @@ GamesView = (function(_super) {
   GamesView.prototype.el = "div#games";
 
   GamesView.prototype.initialize = function() {
-    var _this = this;
-
     this.listenTo(this.collection, 'add', this.appendGame);
     return this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
-      strict: false,
+      strict: true,
+      includePage: true,
       scrollOffset: 600,
-      error: function() {
-        var i, _results;
-
-        i = 0;
-        _results = [];
-        while (i < 20) {
-          _this.collection.add(new Game());
-          _results.push(i++);
-        }
-        return _results;
+      success: function(ee) {
+        console.log(ee);
+        return console.log(ee.length);
       }
     });
   };
@@ -336,18 +328,25 @@ App = (function(_super) {
     return this.initFullScreen();
   };
 
-  App.prototype.center_games = function() {};
+  App.prototype.center_games = function() {
+    var margin;
+
+    if ($("body").height() < $(window).height()) {
+      this.initFullScreen();
+    }
+    margin = ($(window).width() - $("#games").width() - 10) / 2;
+    if (margin > 40) {
+      margin = 0;
+    }
+    return $(".content").css("margin-left", margin);
+  };
 
   App.prototype.initFullScreen = function() {
-    /*
-    i = 0
-    while i<50
-      @games.add new Game()
-      i++
-    
-    setTimeout @initFullScreen, 100
-    */
-
+    $(window).scroll();
+    if ($("body").height() > $(window).height()) {
+      return;
+    }
+    return setTimeout(this.initFullScreen, 100);
   };
 
   App.prototype.routes = {
@@ -386,6 +385,8 @@ $(function() {
     _this = this;
 
   app = new App();
+  $(window).resize(app.center_games);
+  setTimeout(app.center_games, 200);
   Backbone.history.start({
     pushState: true
   });

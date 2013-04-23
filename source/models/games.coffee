@@ -35,7 +35,8 @@ Games = new Schema
 
 Games.statics.get = (req, res)->
   {id} = req.params
-  {page, size} = req.query
+  page = req.query.page || 0
+  page_size = req.query.page_size || 40
   if id?
     if id.match "^[0-9A-Fa-f]+$"
       oid = new ObjectId id
@@ -50,8 +51,8 @@ Games.statics.get = (req, res)->
       else
         res.json err:err
   else
-    #do there pagination
-    @find {}, (err, games)=>
+    #pagination
+    @find {}, null, { skip: (page-1)*page_size, limit: page_size }, (err, games)=>
       unless err?
         if games?
           res.json games
@@ -64,7 +65,7 @@ Games.statics.get = (req, res)->
 gm = (mongoose.model 'games', Games)
 
 i = 0
-while i<10
+while i<100
   game_rnd = Math.floor(Math.random() * 100000000)
   picnum = Math.floor(Math.random() * 3) + 1
   g = new gm

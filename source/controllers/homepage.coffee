@@ -3,7 +3,7 @@ _ = require 'underscore'
 
 homepage_controller =
   homepage: (req,res)->
-    mongoose.model('games').find {}, (err, games)->
+    mongoose.model('games').find {}, null, {limit:20}, (err, games)->
       unless err?
         ctx = games : _.map games, (game)-> game.toJSON()
         res.render 'layout', ctx
