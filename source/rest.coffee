@@ -1,8 +1,8 @@
 mongoose = require 'mongoose'
 
 class Rest extends mongoose.Schema
-  constructor: ->
-    super arguments
+  constructor: (args)->
+    super args
     @statics.get = (req, res, next) ->
       console.log "GET"
       res.send 'GET'

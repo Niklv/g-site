@@ -15,15 +15,20 @@ Game = (function(_super) {
   Game.prototype.idAttribute = "_id";
 
   Game.prototype.initialize = function() {
-    var picnum;
+    /*
+    picnum = Math.floor(Math.random() * 3) + 1
+    @set "_id", Math.floor(Math.random() * 1000000)
+    @set "image_url", '/static/img/thumb150_' + picnum + '.jpg'
+    @set "title", 'This is long default game name with number ' + @get "_id"
+    @set "slug", 'default-game-link-' + @get "_id"
+    @set "swf_url", 'http://www.mousebreaker.com/games/parking/INSKIN__parking-v1.1_Secure.swf'
+    @set "similar", [Math.floor(Math.random() * 1000000),
+                     Math.floor(Math.random() * 1000000),
+                     Math.floor(Math.random() * 1000000),
+                     Math.floor(Math.random() * 1000000),
+                     Math.floor(Math.random() * 1000000)]
+    */
 
-    picnum = Math.floor(Math.random() * 3) + 1;
-    this.set("_id", Math.floor(Math.random() * 1000000));
-    this.set("image_url", '/static/img/thumb150_' + picnum + '.jpg');
-    this.set("title", 'This is long default game name with number ' + this.get("_id"));
-    this.set("slug", 'default-game-link-' + this.get("_id"));
-    this.set("swf_url", 'http://www.mousebreaker.com/games/parking/INSKIN__parking-v1.1_Secure.swf');
-    this.set("similar", [Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000), Math.floor(Math.random() * 1000000)]);
   };
 
   Game.prototype.twin = function(id) {
@@ -66,15 +71,7 @@ GamesCollection = (function(_super) {
   */
 
 
-  GamesCollection.prototype.initialize = function() {
-    var _this = this;
-
-    return this.fetch({
-      success: function() {
-        return console.log(_this.models);
-      }
-    });
-  };
+  GamesCollection.prototype.initialize = function() {};
 
   GamesCollection.prototype.popular = function() {
     return [new Game, new Game, new Game, new Game, new Game, new Game];
@@ -115,6 +112,8 @@ GamePageView = (function(_super) {
   }
 
   GamePageView.prototype.id = "GamePage";
+
+  GamePageView.prototype.el = $("#GamePage");
 
   GamePageView.prototype.templateStr = '<div class="game-page-body">\
         <div class="games-list popular">\
@@ -255,7 +254,7 @@ GamesView = (function(_super) {
     var _this = this;
 
     this.listenTo(this.collection, 'add', this.appendGame);
-    this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
+    return this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
       strict: false,
       scrollOffset: 600,
       error: function() {
@@ -270,7 +269,6 @@ GamesView = (function(_super) {
         return _results;
       }
     });
-    return this.render();
   };
 
   GamesView.prototype.render = function() {
@@ -315,38 +313,41 @@ App = (function(_super) {
 
   App.prototype.initialize = function() {
     this.games = new GamesCollection();
+    _.each($('.game'), function(game_el) {
+      var game, gameView, slug;
+
+      game = new Game;
+      slug = $(game_el).find('a').attr('href');
+      game.set({
+        title: $(game_el).find('div.name').html(),
+        image_url: $(game_el).find('img.thumb').attr('src'),
+        slug: slug.substr(slug.lastIndexOf('/') + 1)
+      });
+      gameView = new GameView({
+        model: game,
+        el: game_el
+      });
+      return this.add(game);
+    }, this.games);
     this.gamesView = new GamesView({
       collection: this.games
     });
-    this.gamePageView = new GamePageView({
-      el: $("#GamePage")
-    });
+    this.gamePageView = new GamePageView();
     return this.initFullScreen();
   };
 
-  App.prototype.center_games = function() {
-    var margin;
-
-    this.initFullScreen();
-    margin = ($(window).width() - $("#games").width() - 10) / 2;
-    if (margin > 40) {
-      margin = 0;
-    }
-    return $(".content").css("margin-left", margin);
-  };
+  App.prototype.center_games = function() {};
 
   App.prototype.initFullScreen = function() {
-    var i;
+    /*
+    i = 0
+    while i<50
+      @games.add new Game()
+      i++
+    
+    setTimeout @initFullScreen, 100
+    */
 
-    if ($("body").height() > $(window).height()) {
-      return;
-    }
-    i = 0;
-    while (i < 50) {
-      this.games.add(new Game());
-      i++;
-    }
-    return setTimeout(this.initFullScreen, 100);
   };
 
   App.prototype.routes = {
@@ -385,8 +386,6 @@ $(function() {
     _this = this;
 
   app = new App();
-  $(window).resize(app.center_games);
-  setTimeout(app.center_games, 200);
   Backbone.history.start({
     pushState: true
   });

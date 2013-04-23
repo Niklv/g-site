@@ -1,0 +1,3 @@
+<div id="GamePageBackdrop" style="{{? !it.gamepage }}display: none;{{?}}" >
+    <div id="GamePage">{{? it.gamepage }}{{=it.gamepage}}{{?}}</div>
+</div>

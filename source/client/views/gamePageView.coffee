@@ -1,5 +1,6 @@
 class GamePageView extends Backbone.View
   id: "GamePage"
+  el: $ "#GamePage"
   templateStr:'<div class="game-page-body">
         <div class="games-list popular">
           <div class="top">Popular games</div>

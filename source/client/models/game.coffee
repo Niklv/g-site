@@ -2,8 +2,8 @@ class Game extends Backbone.Model
   urlRoot: '/api/v1.alpha/games'
   idAttribute: "_id"
   initialize: ()->
+    ###
     picnum = Math.floor(Math.random() * 3) + 1
-
     @set "_id", Math.floor(Math.random() * 1000000)
     @set "image_url", '/static/img/thumb150_' + picnum + '.jpg'
     @set "title", 'This is long default game name with number ' + @get "_id"
@@ -14,6 +14,7 @@ class Game extends Backbone.Model
                      Math.floor(Math.random() * 1000000),
                      Math.floor(Math.random() * 1000000),
                      Math.floor(Math.random() * 1000000)]
+    ###
     return
 
   #methed for development

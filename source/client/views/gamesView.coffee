@@ -13,7 +13,7 @@ class GamesView extends Backbone.View
           @collection.add new Game()
           i++
     }
-    @render()
+    #@render()
 
   render: ()->
     @collection.forEach (game)->

@@ -14,9 +14,10 @@ class GamesCollection extends Backbone.Collection
 
 
   initialize: ()->
-    @fetch
-      success: ()=>
-        console.log @models
+
+    #@fetch
+    #  success: ()=>
+    #    console.log @models
 
   #get from server by name
   popular: ()->
