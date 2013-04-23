@@ -13,9 +13,9 @@ startServer = ()->
   app.configure ()->
 
     #console.log for input req
-    app.use (req, res, next)->
-      console.log '%s %s', req.method, req.url
-      next()
+    #app.use (req, res, next)->
+    #  console.log '%s %s', req.method, req.url
+    #  next()
 
     app.use express.methodOverride()
     app.use express.bodyParser()
@@ -43,6 +43,7 @@ startServer = ()->
 
     #router
     app.get '/', require('./controllers/homepage').homepage
+    app.get '/games/:slug', require('./controllers/homepage').gamepage
 
     #port
     port = process.env.PORT || 5000

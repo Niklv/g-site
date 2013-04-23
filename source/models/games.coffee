@@ -31,12 +31,8 @@ Games = new Schema
     "default": 0
 
 
-
-
 Games.statics.get = (req, res)->
   {id} = req.params
-  page = req.query.page || 0
-  page_size = req.query.page_size || 40
   if id?
     if id.match "^[0-9A-Fa-f]+$"
       oid = new ObjectId id
@@ -51,7 +47,8 @@ Games.statics.get = (req, res)->
       else
         res.json err:err
   else
-    #pagination
+    page = req.query.page || 0
+    page_size = req.query.page_size || 40
     @find {}, null, { skip: (page-1)*page_size, limit: page_size }, (err, games)=>
       unless err?
         if games?
@@ -60,6 +57,32 @@ Games.statics.get = (req, res)->
           res.json err:"games not found"
       else
         res.json err:err
+
+Games.statics.put = (req, res)->
+  {id} = req.params
+  console.log id
+  if id? and id.match "^[0-9A-Fa-f]+$"
+    oid = new ObjectId id
+  else
+    return res.json err:"wrong game id"
+
+  thumbsUp = req.query.thumbsUp
+  thumbsDown = Boolean req.query.thumbsDown
+  changes = {}
+  if thumbsUp?
+    changes.thumbs_up   = if thumbsUp   is true then 1 else -1
+  else if thumbsDown?
+    changes.thumbs_down = if thumbsDown is true then 1 else -1
+  else
+    return res.json err:"unknown action"
+
+  console.log changes
+
+  @update {_id:oid}, {$inc: changes}, (err)->
+    unless err?
+      res.send success:true
+    else
+      return res.send err:err
 
 ###
 gm = (mongoose.model 'games', Games)

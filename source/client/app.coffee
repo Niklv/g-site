@@ -16,7 +16,7 @@ class App extends Backbone.Router
     , @games
 
     @gamesView = new GamesView {collection:@games}
-    @gamePageView = new GamePageView()
+    @gamePageView = new GamePageView el: $ "#GamePage"
     @initFullScreen()
 
   #center games div
@@ -48,15 +48,14 @@ class App extends Backbone.Router
 
   gamepage: (game_link)->
     #fetch from server by game_link, but for this moment we just create new one
-    id = game_link.split "-"
-    id = id[id.length-1]
-    @gamePageView.model = new Game()
-    @gamePageView.model.twin id
-    @gamePageView.model.set "link", game_link
-    $('#GamePage').replaceWith @gamePageView.render()
-    @gamePageView.setupSwfObject()
-    $('#GamePageBackdrop').show()
-    $('#GamePage').show()
+    slug = game_link.substr(game_link.lastIndexOf('/') + 1)
+    @gamePageView.model = new Game {slug:slug}
+    @gamePageView.model.fetch
+      success: ()=>
+        $('#GamePage').replaceWith @gamePageView.render()
+        @gamePageView.setupSwfObject()
+        $('#GamePageBackdrop').show()
+        $('#GamePage').show()
 
 
 
