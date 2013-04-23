@@ -68,9 +68,10 @@ Games.statics.put = (req, res)->
 
   thumbsUp = req.query.thumbsUp
   thumbsDown = Boolean req.query.thumbsDown
+  console.log thumbsUp
   changes = {}
   if thumbsUp?
-    changes.thumbs_up   = if thumbsUp   is true then 1 else -1
+    changes.thumbs_up   = if thumbsUp is true then 1 else -1
   else if thumbsDown?
     changes.thumbs_down = if thumbsDown is true then 1 else -1
   else
