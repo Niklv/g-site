@@ -76,15 +76,14 @@ $ () ->
       return false
 
   $('.search-bar .search-query').typeahead
-    source: (query, process)-> return app.games.search(query)
+    source: app.games.search
     matcher: ()-> true
-    sorter: (items)->
-      items
+    sorter: (items)->items
     highlighter: (game)->
       gv = new GameView {model:game}
       return gv.render()
     updater: (itemString) =>
       item = JSON.parse(itemString)
-      app.navigate '/games/'+item.link, {trigger:true}
+      app.navigate '/games/'+item.slug, {trigger:true}
       return
     items: 8
