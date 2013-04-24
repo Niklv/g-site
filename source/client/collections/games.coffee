@@ -1,17 +1,14 @@
 class GamesCollection extends Backbone.Collection
-  url: '/api/v1.alpha/games'
+  url: "/api/v1.alpha/games/"
   model : Game
 
   initialize: ()->
     @search = _.debounce(@search, 200);
 
-  popular: ()->
-    return [new Game, new Game, new Game, new Game, new Game, new Game]
-
   search: (query, cb)=>
-    console.log @url+"?query="+query
+    console.log "#{@url}?query=#{query}"
     $.ajax
-      url: @url+"?query="+query
+      url: "#{@url}?query=#{query}"
       type: 'GET'
       success:(games)->
         cb _.map games, (game)->

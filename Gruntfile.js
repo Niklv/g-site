@@ -23,6 +23,12 @@ module.exports = function(grunt) {
                 }
             }
         },
+        dotjs: {
+            options: {},
+            files: {
+                "source/static/js/template.js": ['source/views/partials/gamePage.dot']
+            }
+        },
         coffee : {
             compile: {
                 files : {
@@ -50,23 +56,6 @@ module.exports = function(grunt) {
                     "source/static/js/app.body.js": ["source/static/js/coffee.js"]
                 }
             } */
-        },
-
-        watch : {
-            less: {
-                files: ['source/static/less/*.less'],
-                tasks: ['less', 'cssmin', 'concat'],
-                options: {
-                    interrupt: true
-                }
-            },
-            coffee: {
-                files: ['source/client/**.coffee'],
-                tasks: ['coffee'],
-                options: {
-                    interrupt: true
-                }
-            }
         }
     });
 
@@ -75,9 +64,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-coffee');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-dotjs');
 
-    grunt.registerTask('default', ['less', 'cssmin', 'uglify', 'coffee']);
+    grunt.registerTask('default', ['less', 'cssmin', 'uglify', 'coffee', 'dotjs']);
+    //grunt.registerTask('default', 'dotjs');
 
 };
 

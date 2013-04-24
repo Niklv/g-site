@@ -33,28 +33,47 @@ Games = new Schema
 
 Games.statics.get = (req, res)->
   {id} = req.params
-  {query}= req.query
-  if id?
-    if id.match "^[0-9A-Fa-f]+$"
-      oid = new ObjectId id
-    else
-      oid = null
-    @findOne {$or:[{slug:id}, {_id: oid}]}, (err, game)=>
-      if not err? and game?
-        res.json game
+  {query, page, page_size, popular, similar}= req.query
+
+  if popular?
+    #get popular games
+    @find {}, null, {sort: {thumbs_up: -1}, limit: popular}, (err, games)=>
+      if not err? and games?
+        res.json games
       else
-        res.json err:"game not found"
+        res.json err:"popular games not found"
+
+  else if id?
+    if similar?
+      #get similar games to id
+      @find {}, null, {limit: similar}, (err, games)=>
+        unless err?
+          res.json games
+        else
+          res.json err:"similar games not found"
+
+    else
+      #get by id or slug
+      oid = if id?.match "^[0-9A-Fa-f]+$" then new ObjectId id else null
+      @findOne {$or:[{slug:id}, {_id: oid}]}, (err, game)=>
+        if not err? and game?
+          res.json game
+        else
+          res.json err:"game not found"
+
   else if query?
-    console.log query
+    #search by name
     @find {title: new RegExp query, "i"}, null, {limit: 20}, (err, games)=>
       if not err? and games?
         res.json games
       else
         res.json err:"games not found"
+
   else
-    page = req.query.page || 0
-    page_size = req.query.page_size || 40
-    @find {}, null, { skip: (page-1)*page_size, limit: page_size }, (err, games)=>
+    #pagination
+    page = page || 0
+    page_size = page_size || 40
+    @find {}, null, {sort: {thumbs_up: -1}, skip: (page-1)*page_size, limit: page_size }, (err, games)=>
       if not err? and games?
         res.json games
       else
