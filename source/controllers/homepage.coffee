@@ -1,4 +1,5 @@
 mongoose = require 'mongoose'
+#i18n     = require 'i18n'
 _ = require 'underscore'
 
 homepage_controller =
@@ -13,9 +14,10 @@ homepage_controller =
 
   gamepage: (req,res)->
     {slug} = req.params
+    #ctx = locale:i18n.getLocale req
     mongoose.model('games').find {}, null, {limit:40}, (err, games)->
       unless err? or not games?
-        ctx = games : _.map games, (game)-> game.toJSON()
+        ctx.games = _.map games, (game)-> game.toJSON()
         mongoose.model('games').find {slug:slug}, (err, game)->
           unless err? or not game?
             ctx.gamepage = game
