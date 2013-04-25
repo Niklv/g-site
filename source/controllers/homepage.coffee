@@ -14,7 +14,6 @@ homepage_controller =
 
   gamepage: (req,res)->
     {slug} = req.params
-    #ctx = locale:i18n.getLocale req
     mongoose.model('games').find {}, null, {limit:40}, (err, games)->
       unless err? or not games?
         ctx.games = _.map games, (game)-> game.toJSON()
