@@ -32,7 +32,9 @@
                 </ul>
                 <script>
                 var changeLocale = function(obj){
-                    $.cookie('lang', $(obj).attr('data-lang'));
+                    var d=new Date();
+                    d = new Date(d.getTime()+1000*24*60*60*1000);
+                    $.cookie('lang', $(obj).attr('data-lang'), {expires: d,  path: '/'});
                     location.reload();
                 }
                 </script>

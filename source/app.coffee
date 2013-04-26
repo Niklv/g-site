@@ -43,6 +43,7 @@ startServer = ()->
     app.use (req, res, next)->
       #middleware for domain and language detection
       req.domainSettings = req.headers.host
+      console.log req.headers.host
       console.log req.cookies
       #get this grom DB
       defaultLocaleForHost = 'es'
@@ -51,7 +52,11 @@ startServer = ()->
         locale = req.cookies.lang
       else
         locale = defaultLocaleForHost
-        res.cookie "lang", locale, maxAge: 1000*24*60*60*1000
+        d = new Date
+        d = new Date d.getTime + 1000*24*60*60*1000
+        res.cookie "lang", locale,
+          expires: d
+          path: '/'
       i18n.setLocale locale
       next()
     app.use i18n.init
