@@ -17,8 +17,7 @@ module.exports = function(grunt) {
                 files: {
                     "source/static/css/app.min.css": [
                         "source/static/css/bootstrap.min.css", "source/static/css/bootstrap-resonsive.min.css",
-                        "source/static/css/typicons.css", "source/static/css/app.concat.css",
-                        "source/static/css/app.css"
+                        "source/static/css/typicons.css", "source/static/css/app.css"
                     ]
                 }
             }
@@ -44,8 +43,10 @@ module.exports = function(grunt) {
         uglify : {
             head: {
                 files : {
-                    "source/static/js/app.head.js" :["source/static/js/jquery-1.9.1.min.js", "source/static/js/underscore.js",
-                        "source/static/js/backbone.js", "source/static/js/infiniScroll.js", "source/static/js/dot.min.js",
+                    "source/static/js/app.head.js" :[
+                        "source/static/js/jquery-1.9.1.min.js", "source/static/js/jquery.cookie.js",
+                        "source/static/js/underscore.js", "source/static/js/backbone.js",
+                        "source/static/js/infiniScroll.js", "source/static/js/dot.min.js",
                         "source/static/js/swfobject.js"
                     ]
                 }

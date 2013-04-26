@@ -6,6 +6,7 @@ mongoose  = require 'mongoose'
 walk      = require 'walk'
 fs        = require 'fs'
 dot       = require 'express-dot'
+async     = require 'async'
 _         = require 'underscore'
 games     = require './models/games'
 
@@ -26,13 +27,10 @@ startServer = ()->
     app.set 'views', './source/views'
     app.set 'view engine', 'dot'
     dot.setGlobals
+      app:app
       __: i18n.__
-
-    #i18n
-    i18n.configure
-      locales: ['en', 'es', 'ru']
-      directory: './source/static/locales'
-
+      getLocale: i18n.getLocale
+      getCatalog: i18n.getCatalog
 
     #stack
     app.use "/static", express.static './source/static'
@@ -45,9 +43,11 @@ startServer = ()->
     app.use (req, res, next)->
       #middleware for domain and language detection
       req.domainSettings = req.headers.host
-      defaultLocaleForHost = 'es'
       console.log req.cookies
-      if req.cookies.lang?
+      #get this grom DB
+      defaultLocaleForHost = 'es'
+      #
+      if req.cookies.lang? && req.cookies.lang in app.locales
         locale = req.cookies.lang
       else
         locale = defaultLocaleForHost
@@ -59,9 +59,6 @@ startServer = ()->
     app.use '/', require('./controllers/homepage').homepage
     app.use '/games/:slug', require('./controllers/homepage').gamepage
 
-
-
-
     #port
     port = process.env.PORT || 5000
     app.listen port, ()->
@@ -70,14 +67,35 @@ startServer = ()->
     console.log app.stack
 
 
-#generate route for RESTful api
-app.models = {}
-walker = walk.walk root + "/models", followLinks:false
-walker.on "names", (root, modelNames)->
-  modelNames.forEach (modelName)->
-    modelName = modelName.replace /\.[^/.]+$/, ""
-    app.models[modelName] = require './models/'+ modelName
 
-walker.on "end", ()->
-  require('./api') app
-  startServer()
+
+
+#generate route for RESTful api
+createApi = (cb)->
+  app.models = {}
+  walker = walk.walk root + "/models", followLinks:false
+  walker.on "names", (root, modelNames)->
+    modelNames.forEach (modelName)->
+      modelName = modelName.replace /\.[^/.]+$/, ""
+      app.models[modelName] = require './models/'+ modelName
+  walker.on "end", ()->
+    require('./api') app
+    cb()
+
+#generate locales for i18n
+createLocales = (cb)->
+  app.locales = []
+  walker = walk.walk root + "/static/locales", followLinks:false
+  walker.on "names", (root, modelNames)->
+    modelNames.forEach (localeName)->
+      app.locales.push localeName.replace /\.[^/.]+$/, ""
+  walker.on "end", ()->
+    i18n.configure
+      locales: app.locales
+      directory: './source/static/locales'
+    cb()
+
+async.auto
+  createApi: createApi
+  createLocales: createLocales
+  , startServer

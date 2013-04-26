@@ -13,9 +13,7 @@
 </head>
 <body>
     <div id="appView">
-        <div id="topbar" class="navbar navbar-fixed-top">
-            {{# def.load("/views/partials/topbar.dot") }}
-        </div>
+        {{# def.load("/views/partials/topbar.dot") }}
         <div class="content">
             {{? it.games }}
                 <div id="games">{{# def.load("/views/partials/games.dot") }}</div>
