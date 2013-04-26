@@ -53,9 +53,8 @@ startServer = ()->
       else
         locale = defaultLocaleForHost
         d = new Date
-        d = new Date d.getTime + 1000*24*60*60*1000
         res.cookie "lang", locale,
-          expires: d
+          expires: new Date d.getTime + 1000*24*60*60*1000
           path: '/'
       i18n.setLocale locale
       next()
