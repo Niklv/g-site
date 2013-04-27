@@ -4,6 +4,7 @@ _ = require 'underscore'
 
 homepage_controller =
   homepage: (req,res)->
+    console.log "HOMEPAGE"
     mongoose.model('games').find {}, null, {sort: {thumbs_up: -1}, limit:40}, (err, games)->
       unless err?
         ctx = games : _.map games, (game)-> game.toJSON()
@@ -14,9 +15,10 @@ homepage_controller =
 
   gamepage: (req,res)->
     {slug} = req.params
+    console.log "GAMEPAGE"
     mongoose.model('games').find {}, null, {limit:40}, (err, games)->
       unless err? or not games?
-        ctx.games = _.map games, (game)-> game.toJSON()
+        ctx = games: _.map games, (game)-> game.toJSON()
         mongoose.model('games').find {slug:slug}, (err, game)->
           unless err? or not game?
             ctx.gamepage = game
