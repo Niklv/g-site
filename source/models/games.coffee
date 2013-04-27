@@ -86,8 +86,6 @@ Games.statics.put = (req, res)->
   {id} = req.params
   if id? and id.match "^[0-9A-Fa-f]+$"
     oid = new ObjectId id
-  else
-    return res.json err:"wrong game id"
   thumbsUp = req.query.thumbsUp
   thumbsDown = Boolean req.query.thumbsDown
   changes = {}
@@ -98,7 +96,7 @@ Games.statics.put = (req, res)->
   else
     return res.json err:"unknown action"
 
-  @update {_id:oid}, {$inc: changes}, (err)->
+  @update {$or:[{slug:id}, {_id: oid}]}, {$inc: changes}, (err)->
     unless err?
       res.send success:true
     else

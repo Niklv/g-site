@@ -18,14 +18,13 @@
         <div id="sitepanel" class="pull-right">
             <div class="locale-selector">
                 {{ {
-                var current = this.getLocale();
-                var locales = this.app.locales.filter(
+                var locales = it.locales.filter(
                     function(loc){
-                        return loc!==current
+                        return loc!==it.locale;
                     })
                 } }}
                 <ul>
-                <li><a href="/" onclick="changeLocale(this);" data-lang="{{=current}}"><img src="/static/img/language/{{=current}}.png"></a></li>
+                <li><a href="/" onclick="changeLocale(this);" data-lang="{{=it.locale}}"><img src="/static/img/language/{{=it.locale}}.png"></a></li>
                 {{~locales :locale}}
                 <li><a href="/" onclick="changeLocale(this);" data-lang="{{=locale}}"><img src="/static/img/language/{{=locale}}.png"></a></li>
                 {{~}}
@@ -35,12 +34,12 @@
                     var d=new Date();
                     d = new Date(d.getTime()+1000*24*60*60*1000);
                     $.cookie('lang', $(obj).attr('data-lang'), {expires: d,  path: '/'});
-                    location.reload();
+                    window.location.reload();
                 }
                 </script>
             </div>
             <div class="search-bar">
-                <input type="text" class="search-query" placeholder="{{=this.__('Find a game')}}" data-provide="typeahead">
+                <input type="text" class="search-query" placeholder="{{=it.__('Find a game')}}" data-provide="typeahead">
                 <a href="#" class="search-icon"><img src="http://cdn0.kizi.com/assets/collections/magnifier-87877397619c7e96580debc04f2f9c84.png"></a>
             </div>
         </div>
