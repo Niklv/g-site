@@ -5,29 +5,38 @@ homepage_controller =
   homepage: (req,res)->
     console.log "HOMEPAGE"
     {ctx} = req
-    mongoose.model('games').find {}, null, {sort: {thumbs_up: -1}, limit:40}, (err, games)->
-      unless err?
+    mongoose.model('games').pagination 1, 40, ctx, (games)->
+      unless games.err?
         ctx.games = _.map games, (game)-> game.toJSON()
         res.render 'layout', ctx
       else
-        ctx.err = err
+        ctx.err = games.err
         res.render 'layout', ctx
 
   gamepage: (req,res)->
     console.log "GAMEPAGE"
     {slug} = req.params
     {ctx} = req
-    mongoose.model('games').find {}, null, {limit:40}, (err, games)->
-      unless err? or not games?
+
+    mongoose.model('games').pagination 1, 40, ctx, (games)->
+      unless games.err?
         ctx.games = _.map games, (game)-> game.toJSON()
-        mongoose.model('games').findOne {slug:slug}, (err, game)->
-          unless err? or not game?
+        mongoose.model('games').getBySlugOrId slug, ctx, (game)->
+          unless game.err? or _.isEmpty game
             ctx.gamepage = game.toJSON()
-            res.render 'layout', ctx
+            mongoose.model('games').getSimilar slug, 5, ctx, (similar)->
+              unless similar.err?
+                ctx.gamepage.similar = _.map similar, (game)-> game.toJSON()
+                mongoose.model('games').getPopular 5, ctx, (popular)->
+                  unless popular.err?
+                    ctx.gamepage.popular = _.map popular, (game)-> game.toJSON()
+                  res.render 'layout', ctx
+              else
+                res.render 'layout', ctx
           else
             res.render 'layout', ctx
       else
-        ctx.err = err
+        ctx.err = games.err
         res.render 'layout', ctx
 
 module.exports = homepage_controller

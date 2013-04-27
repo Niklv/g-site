@@ -4,13 +4,12 @@
 <div class="game-page-body">
     <div class="games-list popular">
         <div class="top">{{=it.__('Popular games')}}</div>
-        <div class="panel-content"></div>
+        <div class="panel-content">{{? it.gamepage.popular}}{{ {it.games_array=it.gamepage.popular;} }}{{# def.load("/views/partials/games.dot") }}{{?}}</div>
     </div>
     <div class="game-window">
         <div class="top">
             <a href="/" class="typicn previous"></a>
             <span class="game-name">{{=it.gamepage.title}}</span>
-           {{{console.log(it.gamepage.title);}}}
             <a href="#" class="typicn thumbsUp"></a>
             <a href="#" class="typicn thumbsDown"></a>
             <a href="#" class="typicn heart"></a>
@@ -32,7 +31,7 @@
     </div>
     <div class="games-list similar">
         <div class="top">{{=it.__('Similar games')}}</div>
-        <div class="panel-content"></div>
+        <div class="panel-content">{{? it.gamepage.similar}}{{ {it.games_array=it.gamepage.similar;} }}{{# def.load("/views/partials/games.dot") }}{{?}}</div>
     </div>
     <div class="ad">
         <div class="top">{{=it.__('Advertisement')}}</div>
