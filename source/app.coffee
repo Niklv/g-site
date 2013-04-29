@@ -50,9 +50,9 @@ startServer = ()->
       next()
 
     app.use i18n.init
+    app.get '/admin', require('./controllers/adminpage').adminpage
     app.get '/', require('./controllers/homepage').homepage
     app.get '/games/:slug', require('./controllers/homepage').gamepage
-    app.get '/admin', require('./controllers/adminpage').adminpage
     async.auto
       createApi: createApi
       createLocales: createLocales

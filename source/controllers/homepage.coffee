@@ -3,7 +3,6 @@ _ = require 'underscore'
 
 homepage_controller =
   homepage: (req,res)->
-    console.log "HOMEPAGE"
     {ctx} = req
     mongoose.model('games').pagination 1, 40, ctx, (games)->
       unless games.err?
@@ -14,7 +13,6 @@ homepage_controller =
         res.render 'layout', ctx
 
   gamepage: (req,res)->
-    console.log "GAMEPAGE"
     {slug} = req.params
     {ctx} = req
 
