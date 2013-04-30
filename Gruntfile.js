@@ -8,7 +8,8 @@ module.exports = function(grunt) {
                     paths: ["source/static/less"]
                 },
                 files: {
-                    "source/static/css/app.css": "source/static/less/app.less"
+                    "source/static/css/app.css": "source/static/less/app.less",
+                    "source/static/css/admin.css": "source/static/less/admin.less"
                 }
             }
         },
@@ -18,6 +19,9 @@ module.exports = function(grunt) {
                     "source/static/css/app.min.css": [
                         "source/static/css/bootstrap.min.css", "source/static/css/bootstrap-resonsive.min.css",
                         "source/static/css/typicons.css", "source/static/css/app.css"
+                    ],
+                    "source/static/css/admin.min.css": [
+                        "source/static/css/bootstrap.min.css", "source/static/css/admin.css"
                     ]
                 }
             }
@@ -33,7 +37,8 @@ module.exports = function(grunt) {
                 files : {
                     'source/static/js/app.body.js':["source/client/models/*.coffee", "source/client/collections/*.coffee",
                         "source/client/views/**/**.coffee", "source/client/app.coffee"
-                    ]
+                    ],
+                    'source/static/js/admin.body.js':["source/client/admin.coffee"]
                 },
                 options: {
                     bare: true

@@ -8,7 +8,26 @@ fs        = require 'fs'
 dot       = require 'express-dot'
 async     = require 'async'
 _         = require 'underscore'
+passport  = require 'passport'
+localStrategy = require('passport-local').Strategy
 games     = require './models/games'
+
+
+
+passport.use new localStrategy (username, password, done)->
+  if username is 'admin'
+    if password is 'admin'
+      return done null, username
+    else
+      return done null, false, message: 'Incorrect password.'
+  else
+    return done null, false, message: 'Incorrect username.'
+
+passport.serializeUser (user, done)->
+  done null, user
+
+passport.deserializeUser (id, done)->
+  done null, id
 
 
 app = express()
@@ -16,18 +35,23 @@ app = express()
 startServer = ()->
   app.configure ()->
     #dot
-    app.engine 'dot', dot.__express
     app.set 'views', './source/views'
     app.set 'view engine', 'dot'
+    app.engine 'dot', dot.__express
 
     #stack
     app.use "/static", express.static './source/static'
-    app.use express.methodOverride()
+    app.use express.cookieParser()
     app.use express.bodyParser()
+    app.use express.methodOverride()
     app.use express.errorHandler
       dumpExceptions: true,
       showStack: true
-    app.use express.cookieParser()
+
+    app.use express.session secret:'super-puper-secret-key'
+    app.use passport.initialize()
+    app.use passport.session()
+    app.use i18n.init
     app.use (req, res, next)->
       #######LOGGING#######
       #console.log "_________________________________________"
@@ -49,10 +73,6 @@ startServer = ()->
       req.ctx = ctx
       next()
 
-    app.use i18n.init
-    app.get '/admin', require('./controllers/adminpage').adminpage
-    app.get '/', require('./controllers/homepage').homepage
-    app.get '/games/:slug', require('./controllers/homepage').gamepage
     async.auto
       createApi: createApi
       createLocales: createLocales
@@ -61,8 +81,21 @@ startServer = ()->
       port = process.env.PORT || 5000
       app.listen port, ()->
         console.log "Listening on " + port
-
       console.log app.stack
+
+  app.get '/admin', ensureAuthenticated, require('./controllers/adminpage').adminpage
+  app.get '/admin/login', require('./controllers/adminpage').login
+  app.post '/admin/login', passport.authenticate('local'), (req, res)->res.redirect '/admin'
+  app.get '/admin/logout', (req, res)->
+    console.log "logout"
+    req.logout()
+    console.log "redirect"
+    return res.redirect '/admin/login'
+
+  app.get '/', require('./controllers/homepage').homepage
+  app.get '/games/:slug', require('./controllers/homepage').gamepage
+
+
 
 
 
@@ -103,5 +136,10 @@ connectToMongo = (cb)->
     console.log "connection to mongo - Ok!"
     cb()
 
+
+ensureAuthenticated = (req, res, next) ->
+  if req.isAuthenticated()
+    return next()
+  res.redirect '/admin/login'
 
 startServer()

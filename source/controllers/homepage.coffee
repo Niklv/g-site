@@ -7,10 +7,10 @@ homepage_controller =
     mongoose.model('games').pagination 1, 40, ctx, (games)->
       unless games.err?
         ctx.games = _.map games, (game)-> game.toJSON()
-        res.render 'layout', ctx
+        res.render 'index', ctx
       else
         ctx.err = games.err
-        res.render 'layout', ctx
+        res.render 'index', ctx
 
   gamepage: (req,res)->
     {slug} = req.params
@@ -28,13 +28,13 @@ homepage_controller =
                 mongoose.model('games').getPopular 5, ctx, (popular)->
                   unless popular.err?
                     ctx.gamepage.popular = _.map popular, (game)-> game.toJSON()
-                  res.render 'layout', ctx
+                  res.render 'index', ctx
               else
-                res.render 'layout', ctx
+                res.render 'index', ctx
           else
-            res.render 'layout', ctx
+            res.render 'index', ctx
       else
         ctx.err = games.err
-        res.render 'layout', ctx
+        res.render 'index', ctx
 
 module.exports = homepage_controller
