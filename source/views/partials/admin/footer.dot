@@ -1,5 +1,2 @@
-{{# def.load("/views/partials/admin/topbar.dot") }}
-
-
 <script src="/static/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/static/js/admin.body.js"></script>

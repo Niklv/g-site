@@ -9,14 +9,14 @@
             <a class="brand" href="/admin">Game sites</a>
             <div class="nav-collapse collapse">
                 <ul class="nav">
-                    <li class="active"><a href="#">Sites</a></li>
-                    <li><a href="#">Ads</a></li>
-                    <li><a href="#">Status</a></li>
+                    <li class="active"><a href="/admin">Sites</a></li>
+                    <li><a href="/admin">Ads</a></li>
+                    <li><a href="/admin">Status</a></li>
                 </ul>
             </div>
             <div class="nav-collapse collapse">
                 <ul class="nav pull-right">
-                    <li class="nav"><a href="/admin/logout/">logout</a></li>
+                    <li class="nav"><a href="/admin/logout">logout</a></li>
                 </ul>
               </div>
         </div>
