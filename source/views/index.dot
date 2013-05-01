@@ -2,7 +2,7 @@
     {{# def.load("/views/partials/topbar.dot") }}
     <div class="content">
         {{? it.games }}
-            {{ {it.games_array=it.games;} }}
+            {{var games=it.games;}}
             <div id="games">{{#def.load("/views/partials/games.dot") }}</div>
         {{?}}
         {{? !it.games }}
