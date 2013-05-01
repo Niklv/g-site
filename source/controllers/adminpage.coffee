@@ -1,11 +1,22 @@
-admin_controller =
-  adminpage: (req,res)->
-    {ctx} = req
-    ctx.admin = true
-    res.render 'admin', ctx
+DIR = 'partials/admin/'
 
-  login: (req, res)->
+
+admin_controller =
+
+  sites: (req,res)=>
     {ctx} = req
     ctx.admin = true
-    res.render 'admin-login', ctx
+    res.render "#{DIR}sites", ctx
+
+  site_settings: (req,res)=>
+    {ctx} = req
+    ctx.admin = true
+    res.render "#{DIR}index", ctx
+
+  login: (req, res)=>
+    {ctx} = req
+    ctx.admin = true
+    console.log @dir
+    res.render "#{DIR}login", ctx
+
 module.exports = admin_controller

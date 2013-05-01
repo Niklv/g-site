@@ -18,13 +18,5 @@
 </head>
 <body>
     {{=it.body}}
-    <script src="/static/js/bootstrap.min.js"></script>
-
-    {{? it.admin}}
-        <script type="text/javascript" src="/static/js/admin.body.js"></script>
-    {{?}}
-    {{? !it.admin}}
-        <script type="text/javascript" src="/static/js/app.body.js"></script>
-    {{?}}
 </body>
 </html>

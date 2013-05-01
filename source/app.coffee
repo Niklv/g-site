@@ -83,13 +83,11 @@ startServer = ()->
         console.log "Listening on " + port
       console.log app.stack
 
-  app.get '/admin', ensureAuthenticated, require('./controllers/adminpage').adminpage
-  app.get '/admin/login', require('./controllers/adminpage').login
   app.post '/admin/login', passport.authenticate('local'), (req, res)->res.redirect '/admin'
+  app.get '/admin', ensureAuthenticated, require('./controllers/adminpage').sites
+  app.get '/admin/login', redirectIfAuthenticated, require('./controllers/adminpage').login
   app.get '/admin/logout', (req, res)->
-    console.log "logout"
     req.logout()
-    console.log "redirect"
     return res.redirect '/admin/login'
 
   app.get '/', require('./controllers/homepage').homepage
@@ -141,5 +139,11 @@ ensureAuthenticated = (req, res, next) ->
   if req.isAuthenticated()
     return next()
   res.redirect '/admin/login'
+
+redirectIfAuthenticated = (req, res, next)->
+  unless req.isAuthenticated()
+    return next()
+  res.redirect '/admin'
+
 
 startServer()
