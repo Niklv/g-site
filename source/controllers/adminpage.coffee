@@ -1,3 +1,5 @@
+mongoose = require 'mongoose'
+siteDB = mongoose.model('sites')
 DIR = 'partials/admin/'
 
 
@@ -11,6 +13,9 @@ admin_controller =
   site_settings: (req,res)=>
     {ctx} = req
     ctx.admin = true
+    {site} = req.params
+    #siteDB.getByDomain site, ctx,
+    console.log site
     res.render "#{DIR}site-settings", ctx
 
   login: (req, res)=>
