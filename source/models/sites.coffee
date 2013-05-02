@@ -39,10 +39,11 @@ Sites.statics.post = (req, res)->
     site = new (mongoose.model 'sites', Sites)
     site.domain = domain
     site.save (err)->
-      unless err
+      unless err?
         #res.redirect "/admin/site/#{domain}"
         res.redirect "/admin/"
       else
+        console.log err
         res.json {err}
   else
     res.json err:'Not authenticated'
@@ -50,10 +51,11 @@ Sites.statics.post = (req, res)->
 Sites.statics.put = (req, res)->
   if req.isAuthenticated()
     {id} = req.params
+    oid = null
     if id? and id.match "^[0-9A-Fa-f]+$"
       oid = new ObjectId id
     @update {$or:[{domain:id}, {_id: oid}]}, {$set:req.body}, (err)->
-      unless err
+      unless err?
         res.json null
       else
         res.json {err}
