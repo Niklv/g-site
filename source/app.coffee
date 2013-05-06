@@ -9,6 +9,7 @@ dot       = require 'express-dot'
 async     = require 'async'
 _         = require 'underscore'
 passport  = require 'passport'
+memjs     = require 'memjs'
 localStrategy = require('passport-local').Strategy
 
 #models
@@ -19,7 +20,19 @@ sites     = require './models/sites'
 admin     = require './controllers/adminpage'
 index     = require './controllers/homepage'
 
+#for development
+process.env.MEMCACHIER_SERVERS  = process.env.MEMCACHIER_SERVERS  || "mc2.dev.ec2.memcachier.com:11211"
+process.env.MEMCACHIER_USERNAME = process.env.MEMCACHIER_USERNAME || "bb3435"
+process.env.MEMCACHIER_PASSWORD = process.env.MEMCACHIER_PASSWORD || "00b4bfbba300aa89e4bc"
+process.env.MONGOLAB_URI        = process.env.MONGOLAB_URI        || 'mongodb://gsite_app:temp_passw0rd@ds041327.mongolab.com:41327/heroku_app14575890'
 
+###
+mem = memjs.Client.create()
+mem.set 'hello', 'world', (err, val)->
+  console.log val
+  console.log err
+mem.get 'hello', console.log
+###
 
 passport.use new localStrategy (username, password, done)->
   if username is 'admin'
@@ -85,11 +98,19 @@ startServer = ()->
       createApi: createApi
       createLocales: createLocales
       mongo: connectToMongo
+      memcache: connectToMemcache
     , ()->
       port = process.env.PORT || 5000
       app.listen port, ()->
         console.log "Listening on " + port
-      console.log app.stack
+      #console.log app.stack
+      app.mem.set 'hello', 'world'
+      app.mem.get 'hello', console.log
+
+
+
+
+
 
   app.post '/admin/login', passport.authenticate('local'), (req, res)->res.redirect '/admin/'
   app.get '/admin/', ensureAuthenticated, admin.sites
@@ -118,7 +139,7 @@ createApi = (cb)->
       app.models[modelName] = require './models/'+ modelName
   walker.on "end", ()->
     require('./api') app
-    console.log "generate api routes - Ok!"
+    console.log "generate api routes    - Ok!"
     cb()
 
 #generate locales for i18n
@@ -132,18 +153,24 @@ createLocales = (cb)->
     i18n.configure
       locales: app.locales
       directory: './source/static/locales'
-    console.log "search for locales - Ok!"
+    console.log "search for locales     - Ok!"
     cb()
 
 #mongo connection
-connectToMongo = (cb)->
-  mongoose.connect 'mongodb://gsite_app:temp_passw0rd@ds041327.mongolab.com:41327/heroku_app14575890'
+connectToMongo = (cb)=>
+  mongoose.connect process.env.MONGOLAB_URI
   db = mongoose.connection
   db.on 'error', console.error.bind console, 'connection error:'
   db.once 'open', ()->
-    console.log "connection to mongo - Ok!"
+    console.log "connection to mongo    - Ok!"
     cb()
 
+#memcache
+connectToMemcache = (cb)=>
+  app.mem = memjs.Client.create()
+  console.log app.mem
+  console.log   "connection to memcache - Ok!"
+  cb()
 
 ensureAuthenticated = (req, res, next) ->
   if req.isAuthenticated()
