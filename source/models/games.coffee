@@ -51,7 +51,7 @@ Games.statics.pagination = (page, page_size, ctx, cb)->
   page_size = page_size || 40
   @find {}, null, {sort: {thumbs_up: -1}, skip: (page-1)*page_size, limit: page_size }, cb
 
-Games.statics.countGames = (site_id, ctx, cb)->
+Games.statics.countGames = (site_id, ctx, cb)-> #TODO: count for specific site
   @count {}, cb
 
 

@@ -26,28 +26,6 @@ process.env.MEMCACHIER_USERNAME = process.env.MEMCACHIER_USERNAME || "bb3435"
 process.env.MEMCACHIER_PASSWORD = process.env.MEMCACHIER_PASSWORD || "00b4bfbba300aa89e4bc"
 process.env.MONGOLAB_URI        = process.env.MONGOLAB_URI        || 'mongodb://gsite_app:temp_passw0rd@ds041327.mongolab.com:41327/heroku_app14575890'
 
-###
-mem = memjs.Client.create()
-mem.set 'hello', 'world', (err, val)->
-  console.log val
-  console.log err
-mem.get 'hello', console.log
-###
-
-passport.use new localStrategy (username, password, done)->
-  if username is 'admin'
-    if password is 'admin'
-      return done null, username
-    else
-      return done null, false, message: 'Incorrect password.'
-  else
-    return done null, false, message: 'Incorrect username.'
-
-passport.serializeUser (user, done)->
-  done null, user
-
-passport.deserializeUser (id, done)->
-  done null, id
 
 
 app = express()
@@ -75,42 +53,37 @@ startServer = ()->
     app.use (req, res, next)->
       #######LOGGING#######
       #console.log "_________________________________________"
-      console.log req.url
+      #console.log req.url
       #console.log req.cookies
       #####################
-      ctx = {}
-      ctx.locales = app.locales
-      ctx.domain = {}
-      ctx.domain.host = req.headers.host
-      ctx.domain.api = '/api/v1.alpha'
-      ctx.__ = i18n.__
-      ctx.domain.defaultLocale = 'es'
-      if req.cookies.lang in ctx.locales
-        ctx.locale = req.cookies.lang
-      else if i18n.getLocale req in ctx.locales
-        ctx.locale = i18n.getLocale req
-      else
-        ctx.locale = ctx.domain.defaultLocale
-      req.ctx = ctx
-      next()
+      req.ctx = {}
+      req.ctx.__ = i18n.__
+      req.ctx.locales = app.locales
+      req.ctx.api = '/api/v1.alpha'
+      domain = if req.headers.host isnt 'localhost:5000' then req.headers.host else 'g-sites.herokuapp.com'
+      key = domain
+      app.mem.get key, (err, val, extra)->
+        if !err and val
+          _.extend req.ctx, JSON.parse val
+          next()
+        else
+          mongoose.model('sites').getByDomain domain, (err, domain)->
+            if !err? and domain?
+              _.extend req.ctx, domain
+              app.mem.set key, JSON.stringify(domain), ()->console.log "memcache updated for " + key
+              next()
+            else
+              res.send 404
 
     async.auto
-      createApi: createApi
-      createLocales: createLocales
+      api: createApi
+      locales: createLocales
       mongo: connectToMongo
       memcache: connectToMemcache
     , ()->
       port = process.env.PORT || 5000
       app.listen port, ()->
         console.log "Listening on " + port
-      #console.log app.stack
-      app.mem.set 'hello', 'world'
-      app.mem.get 'hello', console.log
-
-
-
-
-
 
   app.post '/admin/login', passport.authenticate('local'), (req, res)->res.redirect '/admin/'
   app.get '/admin/', ensureAuthenticated, admin.sites
@@ -123,8 +96,6 @@ startServer = ()->
 
   app.get '/', index.homepage
   app.get '/games/:slug', index.gamepage
-
-
 
 
 
@@ -167,11 +138,34 @@ connectToMongo = (cb)=>
 
 #memcache
 connectToMemcache = (cb)=>
-  app.mem = memjs.Client.create()
-  console.log app.mem
-  console.log   "connection to memcache - Ok!"
+  app.mem = memjs.Client.create(undefined, expires:60*5)
+  console.log "connection to memcache - Ok!"
   cb()
 
+
+
+
+
+#Auth
+passport.use new localStrategy (username, password, done)->
+  if username is 'admin'
+    if password is 'admin'
+      return done null, username
+    else
+      return done null, false, message: 'Incorrect password.'
+  else
+    return done null, false, message: 'Incorrect username.'
+
+passport.serializeUser (user, done)->
+  done null, user
+
+passport.deserializeUser (id, done)->
+  done null, id
+
+
+
+
+#Other middleware
 ensureAuthenticated = (req, res, next) ->
   if req.isAuthenticated()
     return next()
@@ -181,6 +175,7 @@ redirectIfAuthenticated = (req, res, next)->
   unless req.isAuthenticated()
     return next()
   res.redirect '/admin/'
+
 
 
 startServer()
