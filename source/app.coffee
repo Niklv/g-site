@@ -45,16 +45,13 @@ startServer = ()->
     app.use express.errorHandler
       dumpExceptions: true,
       showStack: true
-
     app.use express.session secret:'super-puper-secret-key'
     app.use passport.initialize()
     app.use passport.session()
     app.use i18n.init
     app.use (req, res, next)->
       #######LOGGING#######
-      #console.log "_________________________________________"
       #console.log req.url
-      #console.log req.cookies
       #####################
       req.ctx = {}
       req.ctx.__ = i18n.__
@@ -62,7 +59,7 @@ startServer = ()->
       req.ctx.api = '/api/v1.alpha'
       domain = if req.headers.host isnt 'localhost:5000' then req.headers.host else 'g-sites.herokuapp.com'
       key = domain
-      app.mem.get key, (err, val, extra)->
+      app.mem.get key, (err, val)->
         if !err and val
           _.extend req.ctx, JSON.parse val
           next()
@@ -70,10 +67,19 @@ startServer = ()->
           mongoose.model('sites').getByDomain domain, (err, domain)->
             if !err? and domain?
               _.extend req.ctx, domain
-              app.mem.set key, JSON.stringify(domain), ()->console.log "memcache updated for " + key
+              app.mem.set key, JSON.stringify(domain)
               next()
             else
               res.send 404
+
+    #if site suspended
+    app.use (req, res, next)->
+      req.ctx.locale = req.ctx.language
+      if req.ctx.enable or (req.url.match "^\/admin")? or (req.headers.referer?.match "\/admin")?
+        next()
+      else
+        res.send 404
+
 
     async.auto
       api: createApi
@@ -94,8 +100,12 @@ startServer = ()->
   app.get '/admin/login', redirectIfAuthenticated, admin.login
   app.get '/admin/logout', admin.logout
 
-  app.get '/', index.homepage
-  app.get '/games/:slug', index.gamepage
+  app.get '/', isInCache, index.homepage
+  app.get '/games/:slug', isInCache, index.gamepage
+
+
+
+
 
 
 
@@ -138,9 +148,12 @@ connectToMongo = (cb)=>
 
 #memcache
 connectToMemcache = (cb)=>
-  app.mem = memjs.Client.create(undefined, expires:60*5)
-  console.log "connection to memcache - Ok!"
+  app.mem = memjs.Client.create(undefined, expires:60*60)
+  console.log  "connection to memcache - Ok!"
   cb()
+
+
+
 
 
 
@@ -165,6 +178,9 @@ passport.deserializeUser (id, done)->
 
 
 
+
+
+
 #Other middleware
 ensureAuthenticated = (req, res, next) ->
   if req.isAuthenticated()
@@ -176,6 +192,12 @@ redirectIfAuthenticated = (req, res, next)->
     return next()
   res.redirect '/admin/'
 
-
+isInCache = (req, res, next)->
+  app.mem.get "#{req.ctx.locale}/#{req.ctx.domain}#{req.url}", (err, val)->
+    if !err and val
+      res.set 'Content-Type', 'text/html'
+      res.send val
+    else
+      next()
 
 startServer()
