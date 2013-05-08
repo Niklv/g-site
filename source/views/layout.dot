@@ -12,6 +12,7 @@
         <link rel="stylesheet" type="text/css" href="/static/css/admin.min.css"/>
     {{??}}
         <link rel="stylesheet" type="text/css" href="/static/css/app.min.css"/>
+        <style>{{# def.load("/views/partials/app/site-css.dot") }}</style>
     {{?}}
     <script>
         var api = "{{=it.api}}";
