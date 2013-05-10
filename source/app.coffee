@@ -105,8 +105,10 @@ startServer = ()->
   app.get '/admin/login', redirectIfAuthenticated, admin.login
   app.get '/admin/logout', admin.logout
 
-  app.get '/', isInCache, index.homepage
-  app.get '/games/:slug', isInCache, index.gamepage
+  app.get '/', index.homepage
+  app.get '/games/:slug', index.gamepage
+  #app.get '/', isInCache, index.homepage
+  #app.get '/games/:slug', isInCache, index.gamepage
 
 
 
