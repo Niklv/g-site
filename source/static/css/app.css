@@ -589,7 +589,7 @@ body.no-scroll #GamePageBackdrop {
   }
 }
 #GamePage .fb-comments {
-  background-color: white;
+  display: none;
   margin-left: 150px;
   padding: 20px;
   border-left: 1px solid rgba(0, 0, 0, 0.6);
