@@ -32,9 +32,9 @@ homepage_controller =
         ctx.gamepage.similar = _.map data.similar, (game)-> game.toJSON()
         ctx.gamepage.popular = _.map data.popular, (game)-> game.toJSON()
         res.render "#{DIR}index", ctx, (err, html)->
-        unless err? or req.isAuthenticated()
-          req.app.mem.set "#{ctx.locale}/#{ctx.hash}#{req.url}", html
-        res.send html
+          unless err? or req.isAuthenticated()
+            req.app.mem.set "#{ctx.locale}/#{ctx.hash}#{req.url}", html
+          res.send html
       else
         ctx.err = {err}
         res.send 404
