@@ -24,6 +24,7 @@ async         = require 'async'
 _             = require 'underscore'
 passport      = require 'passport'
 memjs         = require 'memjs'
+crypto        = require 'crypto'
 logentries    = require 'node-logentries'
 localStrategy = require('passport-local').Strategy
 
@@ -77,7 +78,8 @@ startServer = ()->
       req.ctx.__ = i18n.__
       req.ctx.locales = app.locales
       req.ctx.api = '/api/v1.alpha'
-      domain = if req.headers.host isnt 'localhost:5000' then req.headers.host else 'g-sites.herokuapp.com'
+      domain = req.headers.host.replace(/^www\./, "")#.replace /^search\./, ""
+      domain = domain.replace "localhost:5000", "g-sites.herokuapp.com" #for development
       key = domain
       app.mem.get key, (err, val)->
         if !err and val
@@ -86,10 +88,12 @@ startServer = ()->
         else
           mongoose.model('sites').getByDomain domain, (err, domain)->
             if !err? and domain?
+              domain.hash = crypto.createHash('md5').update(domain.toString()).digest "hex"
               _.extend req.ctx, domain
               app.mem.set key, JSON.stringify(domain)
               next()
             else
+              log.warning "domain #{req.headers.host} not found in sites db"
               res.send 404
 
     #if site suspended
@@ -120,10 +124,10 @@ startServer = ()->
   app.get '/admin/login', redirectIfAuthenticated, admin.login
   app.get '/admin/logout', admin.logout
 
-  app.get '/', index.homepage
-  app.get '/games/:slug', index.gamepage
-  #app.get '/', isInCache, index.homepage
-  #app.get '/games/:slug', isInCache, index.gamepage
+  #app.get '/', index.homepage
+  #app.get '/games/:slug', index.gamepage
+  app.get '/', isInCache, index.homepage
+  app.get '/games/:slug', isInCache, index.gamepage
 
 
 
@@ -142,7 +146,7 @@ createApi = (cb)->
       app.models[modelName] = require './models/'+ modelName
   walker.on "end", ()->
     require('./api') app
-    console.log "generate api routes    - Ok!"
+    log.info "generate api routes    - Ok!"
     cb()
 
 #generate locales for i18n
@@ -156,7 +160,7 @@ createLocales = (cb)->
     i18n.configure
       locales: app.locales
       directory: './source/static/locales'
-    console.log "search for locales     - Ok!"
+    log.info "search for locales     - Ok!"
     cb()
 
 #mongo connection
@@ -165,13 +169,13 @@ connectToMongo = (cb)=>
   db = mongoose.connection
   db.on 'error', console.error.bind console, 'connection error:'
   db.once 'open', ()->
-    console.log "connection to mongo    - Ok!"
+    log.info "connection to mongo    - Ok!"
     cb()
 
 #memcache
 connectToMemcache = (cb)=>
   app.mem = memjs.Client.create(undefined, expires:60*60)
-  console.log  "connection to memcache - Ok!"
+  log.info  "connection to memcache - Ok!"
   cb()
 
 
@@ -215,7 +219,7 @@ redirectIfAuthenticated = (req, res, next)->
   res.redirect '/admin/'
 
 isInCache = (req, res, next)->
-  app.mem.get "#{req.ctx.locale}/#{req.ctx.domain}#{req.url}", (err, val)->
+  app.mem.get "#{req.ctx.locale}/#{req.ctx.hash}#{req.url}", (err, val)->
     if !err and val
       res.set 'Content-Type', 'text/html'
       res.send val
