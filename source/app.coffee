@@ -78,7 +78,6 @@ startServer = ()->
       req.ctx.__ = i18n.__
       req.ctx.locales = app.locales
       req.ctx.api = '/api/v1.alpha'
-      req.headers.host = "www.juegosdevestir1.info"
       domain = req.headers.host.replace(/^www\./, "")#.replace /^search\./, ""
       domain = domain.replace "localhost:5000", "g-sites.herokuapp.com" #for development
       key = domain
@@ -89,7 +88,8 @@ startServer = ()->
         else
           mongoose.model('sites').getByDomain domain, (err, domain)->
             if !err? and domain?
-              domain.hash = crypto.createHash('md5').update(domain.toString()).digest "hex"
+              domain = domain.toJSON()
+              domain.hash = crypto.createHash('md5').update(JSON.stringify(domain)).digest "hex"
               _.extend req.ctx, domain
               app.mem.set key, JSON.stringify(domain)
               next()
@@ -129,7 +129,7 @@ startServer = ()->
   #app.get '/static/css/site-settings.css', index.site_css
   #app.get '/games/:slug', index.gamepage
   app.get '/', isInCache, index.homepage
-  app.get '/static/site-settings.css', isInCache, index.site_css
+  app.get '/static/css/site-settings.css', isInCache, index.site_css
   app.get '/games/:slug', isInCache, index.gamepage
 
 
@@ -224,9 +224,8 @@ redirectIfAuthenticated = (req, res, next)->
 isInCache = (req, res, next)->
   app.mem.get "#{req.ctx.locale}/#{req.ctx.hash}#{req.url}", (err, val)->
     if !err and val
-      extension = req.url.split['.']
-      extension = extension[extension.length-1]
-      if extension is 'css'
+      extension = req.url.split '.'
+      if extension?[extension.length-1] is 'css'
         res.set 'Content-Type', 'text/css'
       else
         res.set 'Content-Type', 'text/html'

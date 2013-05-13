@@ -20,10 +20,9 @@ homepage_controller =
   site_css: (req, res)->
     {ctx} = req
     ctx.layout = false
-    ctx.strip = false
     res.render "#{DIR}style", ctx, (err, css)->
       unless err?
-        req.app.mem.set "#{req.ctx.locale}/#{req.ctx.hash}#{req.url}", css
+        req.app.mem.set "#{ctx.locale}/#{ctx.hash}#{req.url}", css
       res.set 'Content-Type', 'text/css'
       res.send css
 
