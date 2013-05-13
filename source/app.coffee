@@ -78,6 +78,7 @@ startServer = ()->
       req.ctx.__ = i18n.__
       req.ctx.locales = app.locales
       req.ctx.api = '/api/v1.alpha'
+      req.headers.host = "www.juegosdevestir1.info"
       domain = req.headers.host.replace(/^www\./, "")#.replace /^search\./, ""
       domain = domain.replace "localhost:5000", "g-sites.herokuapp.com" #for development
       key = domain
@@ -125,8 +126,10 @@ startServer = ()->
   app.get '/admin/logout', admin.logout
 
   #app.get '/', index.homepage
+  #app.get '/static/css/site-settings.css', index.site_css
   #app.get '/games/:slug', index.gamepage
   app.get '/', isInCache, index.homepage
+  app.get '/static/site-settings.css', isInCache, index.site_css
   app.get '/games/:slug', isInCache, index.gamepage
 
 
@@ -221,7 +224,12 @@ redirectIfAuthenticated = (req, res, next)->
 isInCache = (req, res, next)->
   app.mem.get "#{req.ctx.locale}/#{req.ctx.hash}#{req.url}", (err, val)->
     if !err and val
-      res.set 'Content-Type', 'text/html'
+      extension = req.url.split['.']
+      extension = extension[extension.length-1]
+      if extension is 'css'
+        res.set 'Content-Type', 'text/css'
+      else
+        res.set 'Content-Type', 'text/html'
       res.send val
     else
       next()
