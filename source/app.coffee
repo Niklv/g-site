@@ -89,18 +89,20 @@ startServer = ()->
           mongoose.model('sites').getByDomain domain, (err, domain)->
             if !err? and domain?
               domain = domain.toJSON()
-              domain.hash = crypto.createHash('md5').update(JSON.stringify(domain)).digest "hex"
+              domain.hash = crypto.createHash('md5').update(JSON.stringify domain ).digest "hex"
               _.extend req.ctx, domain
-              app.mem.set key, JSON.stringify(domain)
+              app.mem.set key, JSON.stringify domain
               next()
             else
               log.warning "domain #{req.headers.host} not found in sites db"
               res.send 404
 
-    #if site suspended
+
     app.use (req, res, next)->
       req.ctx.locale = req.ctx.language
-      if req.ctx.enable or (req.url.match "^\/admin")? or (req.headers.referer?.match "\/admin")?
+      #if site suspended
+
+      if req.ctx.enable or (req.url.match "^\/admin")? or (req.user is 'admin' and (req.url.match "^\/api")?)
         next()
       else
         res.send 404
