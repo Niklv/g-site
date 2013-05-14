@@ -1,15 +1,15 @@
 _ = require 'underscore'
 async = require 'async'
 mongoose = require 'mongoose'
-gameDB = mongoose.model('games')
+games = mongoose.model('games')
 DIR = 'partials/app/'
 
 homepage_controller =
   homepage: (req,res)->
     {ctx} = req
-    gameDB.pagination 1, 40, ctx, (err, games)->
+    games.pagination 1, 40, ctx, (err, page_of_games)->
       unless err
-        ctx.games = _.map games, (game)-> game.toJSON()
+        ctx.games = _.map page_of_games, (game)-> game.toJSON()
       else
         ctx.err = {err}
       res.render "#{DIR}index", ctx, (err, html)->
@@ -30,10 +30,10 @@ homepage_controller =
     {slug} = req.params
     {ctx} = req
     async.auto
-      pagination: (cb)=> gameDB.pagination 1, 40, ctx, cb
-      game      : (cb)=> gameDB.getBySlugOrId slug, ctx, cb
-      similar   : (cb)=> gameDB.getSimilar slug, 5, ctx, cb
-      popular   : (cb)=> gameDB.getPopular( 5, ctx, cb)
+      pagination: (cb)=> games.pagination 1, 40, ctx, cb
+      game      : (cb)=> games.getBySlugOrId slug, ctx, cb
+      similar   : (cb)=> games.getSimilar slug, 5, ctx, cb
+      popular   : (cb)=> games.getPopular( 5, ctx, cb)
     , (err, data)=>
       if !err and data.game
         ctx.games = _.map data.pagination, (game)-> game.toJSON()

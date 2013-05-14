@@ -1,9 +1,10 @@
 _ = require "underscore"
 async = require 'async'
 mongoose = require 'mongoose'
-siteDB = mongoose.model('sites')
-gameDB = mongoose.model('games')
+games = mongoose.model('games')
+sites = mongoose.model('sites')
 DIR = 'partials/admin/'
+
 
 
 admin_controller =
@@ -11,24 +12,24 @@ admin_controller =
     {ctx} = req
     ctx.admin = true
     ctx.title = "Admin : Sites"
-    siteDB.getAll (err, sites)->
-      sites = _.map sites, (site)-> site.toJSON()
-      async.each sites, (it, cb)->
-        gameDB.countGames it._id, ctx, (err, number)->
+    sites.getAll (err, allsites)->
+      allsites = _.map allsites, (site)-> site.toJSON()
+      async.each allsites, (it, cb)->
+        games.countGames it._id, ctx, (err, number)->
           it.games_number = number
           cb err
       , (err)->
         unless err
-          ctx.sites = sites
+          ctx.sites = allsites
         else
           ctx.err = err
         res.render "#{DIR}sites", ctx
 
   site_settings: (req,res)=>
     {ctx} = req
-    ctx.admin = true
     {site} = req.params
-    siteDB.getByDomain site, (err, site)->
+    ctx.admin = true
+    sites.getByDomain site, (err, site)->
       ctx.title = "Admin : " + site.domain
       ctx.site = site
       res.render "#{DIR}site-settings", ctx
