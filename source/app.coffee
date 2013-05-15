@@ -1,9 +1,19 @@
 #for development
-process.env.NODETIME_ACCOUNT_KEY = process.env.NODETIME_ACCOUNT_KEY || "43389b1b19e9d19f93e815650663c4aeb1279b7e"
-process.env.MEMCACHIER_SERVERS   = process.env.MEMCACHIER_SERVERS   || "mc2.dev.ec2.memcachier.com:11211"
-process.env.MEMCACHIER_USERNAME  = process.env.MEMCACHIER_USERNAME  || "bb3435"
-process.env.MEMCACHIER_PASSWORD  = process.env.MEMCACHIER_PASSWORD  || "00b4bfbba300aa89e4bc"
-process.env.MONGOLAB_URI         = process.env.MONGOLAB_URI         || 'mongodb://gsite_app:temp_passw0rd@ds041327.mongolab.com:41327/heroku_app14575890'
+process.env.NODETIME_ACCOUNT_KEY    = process.env.NODETIME_ACCOUNT_KEY  || "43389b1b19e9d19f93e815650663c4aeb1279b7e"
+process.env.MEMCACHIER_SERVERS      = process.env.MEMCACHIER_SERVERS    || "mc2.dev.ec2.memcachier.com:11211"
+process.env.MEMCACHIER_USERNAME     = process.env.MEMCACHIER_USERNAME   || "bb3435"
+process.env.MEMCACHIER_PASSWORD     = process.env.MEMCACHIER_PASSWORD   || "00b4bfbba300aa89e4bc"
+process.env.MONGOLAB_URI            = process.env.MONGOLAB_URI          || 'mongodb://gsite_app:temp_passw0rd@ds041327.mongolab.com:41327/heroku_app14575890'
+process.env.FILEPICKER_API_KEY      = process.env.FILEPICKER_API_KEY    || 'AgykdYRA2RAmToPuJhQosz'
+process.env.FILEPICKER_API_SECRET   = process.env.FILEPICKER_API_SECRET || 'F6FYMAT5ZBFUVJL67O4MX5G52U'
+process.env.AWS_ACCESS_KEY_ID       = process.env.AWS_ACCESS_KEY_ID     || 'AKIAITI4VR6ZZFFCJ5FA'
+process.env.AWS_CLOUDFRONT_IMG      = process.env.AWS_CLOUDFRONT_IMG    || 'd1zjm5k21y5rcp.cloudfront.net'
+process.env.AWS_CLOUDFRONT_STATIC   = process.env.AWS_CLOUDFRONT_STATIC || 'dsogyhci03djz.cloudfront.net'
+process.env.AWS_SECRET_ACCESS_KEY   = process.env.AWS_SECRET_ACCESS_KEY || 'KwqYdNAynIkXIc2GlgDIpxHV/uxcOdl0+r4n7NAe'
+process.env.AWS_STORAGE_BUCKET_NAME = process.env.AWS_STORAGE_BUCKET_NAME || 'gsites-static'
+process.env.AWS_STORAGE_BUCKET_NAME_IMG = process.env.AWS_STORAGE_BUCKET_NAME_IMG || 'gsites-img'
+process.env.AWS_STORAGE_BUCKET_NAME_STATIC = process.env.AWS_STORAGE_BUCKET_NAME_STATIC || 'gsites-static'
+
 
 #profiler
 if process.env.NODETIME_ACCOUNT_KEY
@@ -51,7 +61,7 @@ startServer = ()->
 
     #stack
     app.use express.compress()
-    #app.use "/static", express.static './source/static', {maxAge: 86400000}
+    app.use "/static", express.static './source/static', {maxAge: 86400000}
     app.use express.cookieParser()
     app.use express.bodyParser()
     app.use express.methodOverride()
@@ -70,6 +80,7 @@ startServer = ()->
       req.ctx.__ = i18n.__
       req.ctx.locales = app.locales
       req.ctx.api = '/api/v1.alpha'
+      req.ctx.env = process.env
       domain = req.headers.host.replace(/^www\./, "")#.replace /^search\./, ""
       domain = domain.replace "localhost:5000", "g-sites.herokuapp.com" #for development
       key = domain
@@ -123,7 +134,7 @@ startServer = ()->
   #app.get '/games/:slug', index.gamepage
   app.get '/', isInCache, index.homepage
   app.get '/static/css/site-settings.css', isInCache, index.site_css
-  app.get '/static/:folder/:filename', isInCache, static_files.get_file
+  #app.get '/static/:folder/:filename', isInCache, static_files.get_file
   app.get '/games/:slug', isInCache, index.gamepage
 
 

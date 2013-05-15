@@ -1,9 +1,4 @@
-_ = require "underscore"
-async = require 'async'
-mongoose = require 'mongoose'
-siteDB = mongoose.model('sites')
-gameDB = mongoose.model('games')
-
+fs = require 'fs'
 
 static_controller =
   get_file: (req, res)->
@@ -14,6 +9,6 @@ static_controller =
       fingerprint = fingerprint[0]
       filename = filename.replace /^([0-9a-f]{32})/, ""
     console.log folder, fingerprint, filename
-    res.send 404
+    res.sendfile "./source/static/#{folder}/#{filename}"
 
 module.exports = static_controller
