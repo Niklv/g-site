@@ -25,14 +25,14 @@ exports.createApi = (app, cb)->
 #generate locales for i18n
 exports.createLocales = (app, cb)->
   app.locales = []
-  walker = walk.walk root + "/static/locales", followLinks:false
+  walker = walk.walk root + "/public/locales", followLinks:false
   walker.on "names", (root, modelNames)->
     modelNames.forEach (localeName)->
       app.locales.push localeName.replace /\.[^/.]+$/, ""
   walker.on "end", ()->
     i18n.configure
       locales: app.locales
-      directory: './source/static/locales'
+      directory: './source/public/locales'
     app.log.info "search for locales     - Ok!"
     cb()
 
@@ -53,7 +53,7 @@ exports.connectToMemcache = (app, cb)->
 
 #run grunt to compile new js and css files
 exports.runGrunt = (app, cb)->
-  grunt = cp.exec "grunt --no-color", (err,stdout,stderr)->
+  grunt = cp.exec "grunt dev --no-color", (err,stdout,stderr)->
     app.log.info stdout
     if err?
       app.log.err  "grunt                  - FAILED!"
@@ -65,6 +65,7 @@ exports.runGrunt = (app, cb)->
 
 #upload to S3
 exports.uploadStaticToS3 = (app, cb)->
+  ###
   client = knox.createClient
     key: process.env.AWS_ACCESS_KEY_ID
     secret: process.env.AWS_SECRET_ACCESS_KEY
@@ -79,6 +80,6 @@ exports.uploadStaticToS3 = (app, cb)->
       if res.statusCode is 200
         console.log 'saved to %s', req.url
     req.end buf
-
+  ###
   #app.log.info  "upload   static to S3    - Ok!"
   cb()

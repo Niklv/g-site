@@ -22,6 +22,7 @@
     "grunt-contrib-less": "*",
     "grunt-contrib-cssmin": "*",
     "grunt-contrib-coffee": "*",
+    "grunt-contrib-concat": "*",
     "grunt-dotjs": "*"
   },
   "engines": {

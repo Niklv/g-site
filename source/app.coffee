@@ -62,7 +62,8 @@ startServer = ()->
 
     #stack
     app.use express.compress()
-    app.use "/static", express.static './source/static', {maxAge: 86400000}
+    app.use "/public", express.static './source/public', {maxAge: 86400000}
+    app.use "/static", express.static './source/public', {maxAge: 86400000}
     app.use express.cookieParser()
     app.use express.bodyParser()
     app.use express.methodOverride()
@@ -132,13 +133,12 @@ startServer = ()->
   app.get '/admin/logout', admin.logout
 
   #app.get '/', index.homepage
-  #app.get '/static/css/site-settings.css', index.site_css
+  #app.get '/public/css/site-settings.css', index.site_css
   #app.get '/games/:slug', index.gamepage
   app.get '/', isInCache, index.homepage
-  app.get '/static/css/site-settings.css', isInCache, index.site_css
-  #app.get '/static/:folder/:filename', isInCache, static_files.get_file
+  app.get '/public/css/site-settings.css', isInCache, index.site_css
   app.get '/games/:slug', isInCache, index.gamepage
-
+  #app.get '/static/:folder/:filename', isInCache, static_files.get_file
 
 
 
