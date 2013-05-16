@@ -8,9 +8,9 @@ process.env.MONGOLAB_URI            = process.env.MONGOLAB_URI          || 'mong
 process.env.FILEPICKER_API_KEY      = process.env.FILEPICKER_API_KEY    || 'AgykdYRA2RAmToPuJhQosz'
 process.env.FILEPICKER_API_SECRET   = process.env.FILEPICKER_API_SECRET || 'F6FYMAT5ZBFUVJL67O4MX5G52U'
 process.env.AWS_ACCESS_KEY_ID       = process.env.AWS_ACCESS_KEY_ID     || 'AKIAITI4VR6ZZFFCJ5FA'
+process.env.AWS_SECRET_ACCESS_KEY   = process.env.AWS_SECRET_ACCESS_KEY || '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'
 process.env.AWS_CLOUDFRONT_IMG      = process.env.AWS_CLOUDFRONT_IMG    || 'd1zjm5k21y5rcp.cloudfront.net'
 process.env.AWS_CLOUDFRONT_STATIC   = process.env.AWS_CLOUDFRONT_STATIC || 'dsogyhci03djz.cloudfront.net'
-process.env.AWS_SECRET_ACCESS_KEY   = process.env.AWS_SECRET_ACCESS_KEY || 'KwqYdNAynIkXIc2GlgDIpxHV/uxcOdl0+r4n7NAe'
 process.env.AWS_STORAGE_BUCKET_NAME = process.env.AWS_STORAGE_BUCKET_NAME || 'gsites-static'
 process.env.AWS_STORAGE_BUCKET_NAME_IMG = process.env.AWS_STORAGE_BUCKET_NAME_IMG || 'gsites-img'
 process.env.AWS_STORAGE_BUCKET_NAME_STATIC = process.env.AWS_STORAGE_BUCKET_NAME_STATIC || 'gsites-static'
@@ -26,15 +26,11 @@ if process.env.NODETIME_ACCOUNT_KEY
 root          = __dirname
 express       = require 'express'
 i18n          = require 'i18n'
-url           = require 'url'
 mongoose      = require 'mongoose'
-walk          = require 'walk'
-fs            = require 'fs'
 dot           = require 'express-dot'
 async         = require 'async'
 _             = require 'underscore'
 passport      = require 'passport'
-memjs         = require 'memjs'
 crypto        = require 'crypto'
 logentries    = require 'node-logentries'
 localStrategy = require('passport-local').Strategy
@@ -53,6 +49,9 @@ static_files = require './controllers/static'
 
 #logger
 app.log = logentries.logger token: process.env.LOGENTRIES_KEY
+app.log.info "====================================="
+app.log.info "====================================="
+app.log.info "Start server!"
 
 startServer = ()->
   app.configure ()->
@@ -111,13 +110,13 @@ startServer = ()->
       else
         res.send 404
 
-
     async.auto
       api:        (cb) -> require('./onstart').createApi app, cb
       locales:    (cb) -> require('./onstart').createLocales app, cb
       mongo:      (cb) -> require('./onstart').connectToMongo app, cb
       memcache:   (cb) -> require('./onstart').connectToMemcache app, cb
-      uploadToS3: (cb) -> require('./onstart').uploadStaticToS3 app, cb
+      grunt:      (cb) -> require('./onstart').runGrunt app, cb
+      uploadToS3: ['grunt', (cb) -> require('./onstart').uploadStaticToS3 app, cb ]
     , ()->
       port = process.env.PORT || 5000
       app.listen port, ()->

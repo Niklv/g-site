@@ -73,7 +73,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-dotjs');
 
-    grunt.registerTask('default', ['less', 'cssmin', 'uglify', 'coffee', 'dotjs']);
+    grunt.registerTask('default', ['less', 'cssmin', 'uglify', 'coffee']);
     //grunt.registerTask('default', 'dotjs');
 
 };
