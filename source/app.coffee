@@ -1,4 +1,5 @@
 #for development
+process.env.LOGENTRIES_KEY          = process.env.LOGENTRIES_KEY        || "703440f5-1d7b-4523-885c-76516d11102c"
 process.env.NODETIME_ACCOUNT_KEY    = process.env.NODETIME_ACCOUNT_KEY  || "43389b1b19e9d19f93e815650663c4aeb1279b7e"
 process.env.MEMCACHIER_SERVERS      = process.env.MEMCACHIER_SERVERS    || "mc2.dev.ec2.memcachier.com:11211"
 process.env.MEMCACHIER_USERNAME     = process.env.MEMCACHIER_USERNAME   || "bb3435"
@@ -39,6 +40,8 @@ logentries    = require 'node-logentries'
 localStrategy = require('passport-local').Strategy
 
 
+app = express()
+
 #register models
 sites        = require './models/sites'
 games        = require './models/games'
@@ -49,9 +52,8 @@ index        = require './controllers/index'
 static_files = require './controllers/static'
 
 #logger
-log = logentries.logger token:'703440f5-1d7b-4523-885c-76516d11102c'
+app.log = logentries.logger token: process.env.LOGENTRIES_KEY
 
-app = express()
 startServer = ()->
   app.configure ()->
     #dot
@@ -97,7 +99,7 @@ startServer = ()->
               app.mem.set key, JSON.stringify domain
               next()
             else
-              log.warning "domain #{req.headers.host} not found in sites db"
+              app.log.warning "domain #{req.headers.host} not found in sites db"
               res.send 404
 
 
@@ -111,10 +113,11 @@ startServer = ()->
 
 
     async.auto
-      api: createApi
-      locales: createLocales
-      mongo: connectToMongo
-      memcache: connectToMemcache
+      api:        (cb) -> require('./onstart').createApi app, cb
+      locales:    (cb) -> require('./onstart').createLocales app, cb
+      mongo:      (cb) -> require('./onstart').connectToMongo app, cb
+      memcache:   (cb) -> require('./onstart').connectToMemcache app, cb
+      uploadToS3: (cb) -> require('./onstart').uploadStaticToS3 app, cb
     , ()->
       port = process.env.PORT || 5000
       app.listen port, ()->
@@ -141,58 +144,6 @@ startServer = ()->
 
 
 
-
-
-
-#generate route for RESTful api
-createApi = (cb)->
-  app.models = {}
-  walker = walk.walk root + "/models", followLinks:false
-  walker.on "names", (root, modelNames)->
-    modelNames.forEach (modelName)->
-      modelName = modelName.replace /\.[^/.]+$/, ""
-      app.models[modelName] = require './models/'+ modelName
-  walker.on "end", ()->
-    require('./api') app
-    log.info "generate api routes    - Ok!"
-    cb()
-
-#generate locales for i18n
-createLocales = (cb)->
-  app.locales = []
-  walker = walk.walk root + "/static/locales", followLinks:false
-  walker.on "names", (root, modelNames)->
-    modelNames.forEach (localeName)->
-      app.locales.push localeName.replace /\.[^/.]+$/, ""
-  walker.on "end", ()->
-    i18n.configure
-      locales: app.locales
-      directory: './source/static/locales'
-    log.info "search for locales     - Ok!"
-    cb()
-
-#mongo connection
-connectToMongo = (cb)=>
-  mongoose.connect process.env.MONGOLAB_URI
-  db = mongoose.connection
-  db.on 'error', console.error.bind console, 'connection error:'
-  db.once 'open', ()->
-    log.info "connection to mongo    - Ok!"
-    cb()
-
-#memcache
-connectToMemcache = (cb)=>
-  app.mem = memjs.Client.create(undefined, expires:60*60)
-  log.info  "connection to memcache - Ok!"
-  cb()
-
-
-
-
-
-
-
-
 #Auth
 passport.use new localStrategy (username, password, done)->
   if username is 'admin'
@@ -208,10 +159,6 @@ passport.serializeUser (user, done)->
 
 passport.deserializeUser (id, done)->
   done null, id
-
-
-
-
 
 
 
