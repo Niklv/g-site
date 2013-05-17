@@ -19,6 +19,8 @@
     "node-logentries": "x.0.0",
     "grunt": "0.4.x",
     "grunt-cli": "*",
+    "grunt-rev": "*",
+    "grunt-contrib-clean": "*",
     "grunt-contrib-uglify": "*",
     "grunt-contrib-less": "*",
     "grunt-contrib-cssmin": "*",
