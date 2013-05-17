@@ -53,8 +53,10 @@ exports.connectToMemcache = (app, cb)->
 
 #run grunt to compile new js and css files
 exports.runGrunt = (app, cb)->
-  grunt = cp.exec "node_modules/grunt-cli/bin/grunt dev --no-color", (err,stdout,stderr)->
+  #console.log require 'grunt'
+  grunt = cp.exec "sh node_modules/.bin/grunt dev", (err,stdout,stderr)->
     app.log.info stdout
+    console.log stdout
     if err?
       app.log.err  "grunt                  - FAILED!"
       app.log.err stderr
@@ -63,6 +65,7 @@ exports.runGrunt = (app, cb)->
       console.log err
     else
       app.log.info  "grunt                  - Ok!"
+      console.log  "grunt                  - Ok!"
     cb()
 
 #upload to S3
