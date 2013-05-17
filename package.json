@@ -18,6 +18,7 @@
     "nodetime":"*",
     "node-logentries": "x.0.0",
     "grunt": "0.4.x",
+    "grunt-cli": "*",
     "grunt-contrib-uglify": "*",
     "grunt-contrib-less": "*",
     "grunt-contrib-cssmin": "*",
