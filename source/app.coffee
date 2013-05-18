@@ -83,6 +83,7 @@ startServer = ()->
       req.ctx.locales = app.locales
       req.ctx.api = '/api/v1.alpha'
       req.ctx.env = process.env
+      req.ctx.file = app.file
       domain = req.headers.host.replace(/^www\./, "")#.replace /^search\./, ""
       domain = domain.replace "localhost:5000", "g-sites.herokuapp.com" #for development
       key = domain
