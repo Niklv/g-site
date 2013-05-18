@@ -54,7 +54,7 @@ exports.connectToMemcache = (app, cb)->
 
 #run grunt to compile new js and css files
 exports.runGrunt = (app, cb)->
-  grunt = cp.exec "sh node_modules/.bin/grunt dev --no-color", (err,stdout,stderr)->
+  grunt = cp.exec "node node_modules/grunt-cli/bin/grunt dev --no-color", (err,stdout,stderr)->
     app.log.info stdout
     if err?
       app.log.err "grunt                  - FAILED!"
@@ -72,13 +72,13 @@ exports.uploadStaticToS3 = (app, cb)->
     bucket: process.env.AWS_STORAGE_BUCKET_NAME_STATIC
 
   app.file = {}
-  folders = ['js', 'css', 'locales']
+  folders = ['js', 'css', 'fonts']
 
   async.each folders, (folder, cb1)->
-    walker = walk.walk "#{root}\\public\\#{folder}", followLinks:false
+    walker = walk.walk "#{root}/public/#{folder}", followLinks:false
     walker.on "names", (root, files)->
       async.each files, (file, cb2)->
-        fs.readFile "#{root}\\#{file}", (err, buf)->
+        fs.readFile "#{root}/#{file}", (err, buf)->
           name = file.replace /^([0-9a-f]{32}\.)/, ""
           dotIndex = name.lastIndexOf '.'
           ext = if dotIndex > 0 then name.substr 1 + dotIndex else null

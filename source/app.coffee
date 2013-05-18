@@ -80,6 +80,7 @@ startServer = ()->
       #####################
       req.ctx = {}
       req.ctx.__ = i18n.__
+      req.ctx.getCatalog = i18n.getCatalog
       req.ctx.locales = app.locales
       req.ctx.api = '/api/v1.alpha'
       req.ctx.env = process.env
