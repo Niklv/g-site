@@ -49,6 +49,12 @@ exports.connectToMongo = (app, cb)->
 #memcache
 exports.connectToMemcache = (app, cb)->
   app.mem = memjs.Client.create(undefined, expires:60*60)
+  app.mem.flush (err, info)->
+    unless err
+      app.log.info  "flush memcache         - Ok!"
+    else
+      app.log.err  "flush memcache         - ERROR!"
+      app.log.err err, info
   app.log.info  "connection to memcache - Ok!"
   cb()
 
@@ -95,16 +101,20 @@ exports.uploadStaticToS3 = (app, cb)->
             'Content-Type': contentType
             'x-amz-acl': 'public-read'
           req.on 'response', (res)->
+            console.log res.statusCode, contentType
             if res.statusCode is 200
-              app.file[name] = req.url
+              app.file[name] = "http://#{process.env.AWS_CLOUDFRONT_STATIC}/public/#{folder}/#{file}"
             else
-              app.file[name] = ""
+              app.file[name] = "/public/#{folder}/#{file}"
             cb2()
           req.end buf
           #cb2()
       , cb1
   , (err)->
     if err?
+      app.log.info "Load static files to S3 - ERROR!"
       app.log.err err
-    console.log app.file
+    else
+      app.log.info "Load static files to S3 - Ok!"
+    app.log.info app.file
     cb()
