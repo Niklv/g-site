@@ -14,7 +14,7 @@ homepage_controller =
         ctx.err = {err}
       res.render "#{DIR}index", ctx, (err, html)->
         unless err? or req.isAuthenticated()
-          req.app.mem.set "#{ctx.locale}/#{ctx.hash}#{req.url}", html
+          req.app.mem?.set "#{ctx.locale}/#{ctx.hash}#{req.url}", html
         res.send html
 
   site_css: (req, res)->

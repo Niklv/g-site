@@ -134,16 +134,15 @@ startServer = ()->
   app.get '/admin/login', redirectIfAuthenticated, admin.login
   app.get '/admin/logout', admin.logout
 
-  #app.get '/', index.homepage
-  #app.get '/public/css/site-settings.css', index.site_css
-  #app.get '/games/:slug', index.gamepage
-  app.get '/', isInCache, index.homepage
-  app.get '/public/css/site-settings.css', isInCache, index.site_css
-  app.get '/games/:slug', isInCache, index.gamepage
-  #app.get '/static/:folder/:filename', isInCache, static_files.get_file
-
-
-
+  switch process.env.ENV
+    when 'dev'
+      app.get '/', index.homepage
+      app.get '/public/css/site-settings.css', index.site_css
+      app.get '/games/:slug', index.gamepage
+    else
+      app.get '/', isInCache, index.homepage
+      app.get '/public/css/site-settings.css', isInCache, index.site_css
+      app.get '/games/:slug', isInCache, index.gamepage
 
 #Auth
 passport.use new localStrategy (username, password, done)->

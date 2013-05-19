@@ -101,18 +101,18 @@ exports.uploadStaticToS3 = (app, cb)->
             'Content-Type': contentType
             'x-amz-acl': 'public-read'
           req.on 'response', (res)->
-            console.log res.statusCode, contentType
             if res.statusCode is 200
               app.file[name] = "http://#{process.env.AWS_CLOUDFRONT_STATIC}/public/#{folder}/#{file}"
             else
+              app.log.err "Loading #{folder}/#{file} - ERROR!"
+              app.log.err "#{folder}/#{file} will be served from heroku"
               app.file[name] = "/public/#{folder}/#{file}"
             cb2()
           req.end buf
-          #cb2()
       , cb1
   , (err)->
     if err?
-      app.log.info "Load static files to S3 - ERROR!"
+      app.log.err "Load static files to S3 - ERROR!"
       app.log.err err
     else
       app.log.info "Load static files to S3 - Ok!"
