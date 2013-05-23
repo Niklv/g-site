@@ -84,7 +84,8 @@ startServer = ()->
       req.ctx.file = app.file
       next()
 
-    app.configure "dev", ->
+
+    if process.env.NODE_ENV is "dev"
       app.use (req, res, next)->
         domainName = req.headers.host.replace(/^www\./, "").replace "localhost:5000", "g-sites.herokuapp.com"
         mongoose.model('sites').getByDomain domainName, (err, domain)->
@@ -96,8 +97,7 @@ startServer = ()->
           else
             app.log.warning "domain #{req.headers.host} not found in sites db"
             res.send 404
-
-    app.configure "production", ->
+    else
       app.use (req, res, next)->
         #domainName = req.headers.host.replace(/^www\./, "")
         domainName = req.headers.host.replace(/^www\./, "").replace "localhost:5000", "g-sites.herokuapp.com"
