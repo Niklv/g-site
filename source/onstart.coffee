@@ -79,7 +79,7 @@ exports.uploadStaticToS3 = (app, cb)->
     bucket: process.env.AWS_STORAGE_BUCKET_NAME_STATIC
 
   app.file = {}
-  folders = ['js', 'css', 'fonts']
+  folders = ['js', 'css', 'fonts', 'img/UI', 'img/language', 'img/bootstrap-colorpicker']
 
   async.each folders, (folder, cb1)->
     walker = walk.walk "#{root}/public/#{folder}", followLinks:false
@@ -118,4 +118,5 @@ exports.uploadStaticToS3 = (app, cb)->
     else
       app.log.info "Load static files to S3 - Ok!"
     app.log.info app.file
+    console.log app.file
     cb()
