@@ -4,4 +4,9 @@ data-fp-mimetype="image/*"
 data-fp-button-class="btn"
 data-fp-multiple="false"
 data-fp-store-location="S3"
-data-fp-store-path="/"
+data-fp-store-path="/{{=it.site.domain}}/"
+data-fp-store-access="public"
+onchange="
+    //$(this).parent().find();
+    console.log(event.fpfile);
+"
