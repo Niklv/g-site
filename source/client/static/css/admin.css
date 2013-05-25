@@ -13,6 +13,9 @@ body {
 #sources.tab-pane > form {
   line-height: 34px;
 }
+button.file-upload {
+  display: block;
+}
 .preview {
   position: relative;
   float: left;

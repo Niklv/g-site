@@ -1,4 +1,4 @@
-var buttonError, buttonSuccess, getDomain, trimInput;
+var addPicToPreview, buttonError, buttonSuccess, getDomain, trimInput;
 
 getDomain = function() {
   var domain;
@@ -142,6 +142,17 @@ $('#cp3').colorpicker().on('changeColor', function(ev) {
   return $('#inputBackgroundColor').val(ev.color.toHex());
 });
 
-$(".preview i").click(function() {
-  return console.log("click");
+$(document).delegate(".preview i", "click", function() {
+  $(this).parent().parent().find("input").attr("value", null);
+  $(this).parent().remove();
+  console.log($(this));
+  console.log($(this).parent().parent());
+  console.log($(this).parent().parent().find(".file-upload"));
+  return $(this).parent().parent().find(".file-upload").after('<span class="help-inline">Press save button to apply changes</span>');
 });
+
+addPicToPreview = function(self, event, link) {
+  $(self).attr('value', link);
+  $(self).parent().find(".preview").html('<i class="icon-remove icon-white"></i><img src="' + link + '"/>');
+  return $(self).parent().find(".file-upload").after('<span class="help-inline">Press save button to apply changes</span>');
+};
