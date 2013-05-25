@@ -98,3 +98,6 @@ $('#cp2').colorpicker().on 'changeColor', (ev)->
 
 $('#cp3').colorpicker().on 'changeColor', (ev)->
   $('#inputBackgroundColor').val ev.color.toHex()
+
+$(".preview i").click ->
+  console.log "click"

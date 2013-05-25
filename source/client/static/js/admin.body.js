@@ -141,3 +141,7 @@ $('#cp2').colorpicker().on('changeColor', function(ev) {
 $('#cp3').colorpicker().on('changeColor', function(ev) {
   return $('#inputBackgroundColor').val(ev.color.toHex());
 });
+
+$(".preview i").click(function() {
+  return console.log("click");
+});
