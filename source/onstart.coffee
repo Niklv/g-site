@@ -74,12 +74,14 @@ exports.runGrunt = (app, cb)->
 
 #upload to S3
 exports.uploadStaticToS3 = (app, cb)->
+  app.file = {}
+
+
   client = knox.createClient
     key: process.env.AWS_ACCESS_KEY_ID
     secret: process.env.AWS_SECRET_ACCESS_KEY
     bucket: process.env.AWS_STORAGE_BUCKET_NAME_STATIC
 
-  app.file = {}
   options =
     followLinks:false
     filters: ["locales"]
@@ -100,19 +102,23 @@ exports.uploadStaticToS3 = (app, cb)->
       else
         contentType = 'text/plain'
 
-      req = client.put "#{folder}/#{fileStats.name}",
-        'Content-Length': buf.length
-        'Content-Type': contentType
-        'x-amz-acl': 'public-read'
-      req.on 'response', (res)->
-        if res.statusCode is 200
-          app.file[name] = "http://#{process.env.AWS_CLOUDFRONT_STATIC}/#{folder}/#{fileStats.name}"
-        else
-          app.log.err "Loading #{folder}/#{fileStats.name} - ERROR!"
-          app.log.err "#{folder}/#{fileStats.name} will be served from heroku"
-          app.file[name] = "/#{folder}/#{fileStats.name}"
+      if process.env.UPLOAD_STATIC_TO_S3
+        app.file[name] = "/#{folder}/#{fileStats.name}"
         next()
-      req.end buf
+      else
+        req = client.put "#{folder}/#{fileStats.name}",
+          'Content-Length': buf.length
+          'Content-Type': contentType
+          'x-amz-acl': 'public-read'
+        req.on 'response', (res)->
+          if res.statusCode is 200
+            app.file[name] = "http://#{process.env.AWS_CLOUDFRONT_STATIC}/#{folder}/#{fileStats.name}"
+          else
+            app.log.err "Loading #{folder}/#{fileStats.name} - ERROR!"
+            app.log.err "#{folder}/#{fileStats.name} will be served from heroku"
+            app.file[name] = "/#{folder}/#{fileStats.name}"
+          next()
+        req.end buf
 
   walker.on "end", ->
     app.log.info "Load static files to S3 - Ok!"

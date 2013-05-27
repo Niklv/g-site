@@ -103,14 +103,13 @@ $('#cp3').colorpicker().on 'changeColor', (ev)->
 #remove pic
 $(document).delegate ".preview i", "click", ()->
   $(this).parent().parent().find("input").attr("value", null)
-  $(this).parent().remove()
-  console.log $(this)
-  console.log $(this).parent().parent()
-  console.log $(this).parent().parent().find(".file-upload")
-  $(this).parent().parent().find(".file-upload").after '<span class="help-inline">Press save button to apply changes</span>'
+  unless $(this).parent().parent().find(".help-inline").length
+    $(this).parent().parent().find(".file-upload").after '<span class="help-inline">Press save button below the form to apply changes</span>'
+  $(this).parent().html("")
 
 #add/replace pic
 addPicToPreview = (self, event, link)->
   $(self).attr 'value', link
   $(self).parent().find(".preview").html '<i class="icon-remove icon-white"></i><img src="' + link + '"/>'
-  $(self).parent().find(".file-upload").after '<span class="help-inline">Press save button to apply changes</span>'
+  unless $(self).parent().find(".help-inline").length
+    $(self).parent().find(".file-upload").after '<span class="help-inline">Press save button below the form to apply changes</span>'

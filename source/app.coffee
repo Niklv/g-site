@@ -15,12 +15,21 @@ process.env.AWS_STORAGE_BUCKET_NAME = process.env.AWS_STORAGE_BUCKET_NAME || 'gs
 process.env.AWS_STORAGE_BUCKET_NAME_IMG = process.env.AWS_STORAGE_BUCKET_NAME_IMG || 'gsites-img'
 process.env.AWS_STORAGE_BUCKET_NAME_STATIC = process.env.AWS_STORAGE_BUCKET_NAME_STATIC || 'gsites-static'
 
+if process.env.NODE_ENV is "dev"
+  process.env.UPLOAD_STATIC_TO_S3 = false
+  process.env.USE_MEMCACHE = false
+else
+  process.env.UPLOAD_STATIC_TO_S3 = true
+  process.env.USE_MEMCACHE = true
+
 
 #profiler
 if process.env.NODETIME_ACCOUNT_KEY
   require('nodetime').profile
     accountKey: process.env.NODETIME_ACCOUNT_KEY
     appName: 'g-sites'
+
+
 
 #requires
 root          = __dirname
@@ -85,7 +94,7 @@ startServer = ()->
       next()
 
 
-    if process.env.NODE_ENV is "dev"
+    if process.env.USE_MEMCACHE
       app.use (req, res, next)->
         domainName = req.headers.host.replace(/^www\./, "").replace "localhost:5000", "g-sites.herokuapp.com"
         mongoose.model('sites').getByDomain domainName, (err, domain)->
@@ -182,7 +191,7 @@ redirectIfAuthenticated = (req, res, next)->
 
 
 #Cache middleware
-if process.env.NODE_ENV is "dev"
+unless process.env.USE_MEMCACHE
   isInCache = (req,res,next)->next()
   addToCache = ->
 else
@@ -197,6 +206,8 @@ else
         res.send val
       else
         next()
+
+
 
   addToCache = (req, res)->
     if res.saveToCache? or req.isAuthenticated()
