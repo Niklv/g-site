@@ -88,8 +88,8 @@ exports.uploadStaticToS3 = (app, cb)->
 
   walker = walk.walk "#{root}/public/", options
   walker.on "file", (root, fileStats, next)->
-    fs.readFile "#{root}/#{fileStats.name}", (err, buf)->
-      folder = path.normalize(root).replace(path.normalize(__dirname + "\\"), "").replace /\\/g, "/"
+    fs.readFile path.normalize("#{root}/#{fileStats.name}"), (err, buf)->
+      folder = path.normalize(root.replace(__dirname, "")).replace(/\\/g, "/").replace "/", ""
       name = fileStats.name.replace /^([0-9a-f]{32}\.)/, ""
       dotIndex = name.lastIndexOf '.'
       ext = if dotIndex > 0 then name.substr 1 + dotIndex else null
@@ -102,10 +102,7 @@ exports.uploadStaticToS3 = (app, cb)->
       else
         contentType = 'text/plain'
 
-      if process.env.UPLOAD_STATIC_TO_S3
-        app.file[name] = "/#{folder}/#{fileStats.name}"
-        next()
-      else
+      if process.env.UPLOAD_STATIC_TO_S3.localeCompare 'true' is 0
         req = client.put "#{folder}/#{fileStats.name}",
           'Content-Length': buf.length
           'Content-Type': contentType
@@ -119,6 +116,9 @@ exports.uploadStaticToS3 = (app, cb)->
             app.file[name] = "/#{folder}/#{fileStats.name}"
           next()
         req.end buf
+      else
+        app.file[name] = "/#{folder}/#{fileStats.name}"
+        next()
 
   walker.on "end", ->
     app.log.info "Load static files to S3 - Ok!"

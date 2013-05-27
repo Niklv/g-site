@@ -15,6 +15,7 @@
     "knox": "0.x.x",
     "passport": "0.x.x",
     "passport-local": "0.x.x",
+    "simple_blitline_node": "2.x.x",
     "nodetime":"*",
     "node-logentries": "x.0.0",
     "grunt": "0.4.x",

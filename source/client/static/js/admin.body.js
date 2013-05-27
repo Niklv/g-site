@@ -144,15 +144,16 @@ $('#cp3').colorpicker().on('changeColor', function(ev) {
 
 $(document).delegate(".preview i", "click", function() {
   $(this).parent().parent().find("input").attr("value", null);
-  $(this).parent().remove();
-  console.log($(this));
-  console.log($(this).parent().parent());
-  console.log($(this).parent().parent().find(".file-upload"));
-  return $(this).parent().parent().find(".file-upload").after('<span class="help-inline">Press save button to apply changes</span>');
+  if (!$(this).parent().parent().find(".help-inline").length) {
+    $(this).parent().parent().find(".file-upload").after('<span class="help-inline">Press save button below the form to apply changes</span>');
+  }
+  return $(this).parent().html("");
 });
 
 addPicToPreview = function(self, event, link) {
   $(self).attr('value', link);
   $(self).parent().find(".preview").html('<i class="icon-remove icon-white"></i><img src="' + link + '"/>');
-  return $(self).parent().find(".file-upload").after('<span class="help-inline">Press save button to apply changes</span>');
+  if (!$(self).parent().find(".help-inline").length) {
+    return $(self).parent().find(".file-upload").after('<span class="help-inline">Press save button below the form to apply changes</span>');
+  }
 };

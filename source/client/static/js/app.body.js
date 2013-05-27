@@ -355,6 +355,7 @@ App = (function(_super) {
   }
 
   App.prototype.initialize = function() {
+    this.bind('all', this._trackPageview);
     this.games = new GamesCollection();
     _.each($('.game'), function(game_el) {
       var game, gameView, slug;
@@ -400,6 +401,17 @@ App = (function(_super) {
       return;
     }
     return setTimeout(this.initFullScreen, 100);
+  };
+
+  App.prototype._trackPageview = function() {
+    var url;
+
+    console.log("_trackPageview");
+    url = Backbone.history.getFragment();
+    if (!/^\//.test(url) && url !== "") {
+      url = "/" + url;
+    }
+    return _gaq.push(['_trackPageview', url]);
   };
 
   App.prototype.routes = {
