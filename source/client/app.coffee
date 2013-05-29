@@ -1,6 +1,6 @@
 class App extends Backbone.Router
   initialize: ->
-    @bind 'all', @_trackPageview
+    @bind 'route', @_trackPageview
     @games = new GamesCollection()
     #init games collection from html
     _.each $('.game'), (game_el)->
@@ -34,11 +34,10 @@ class App extends Backbone.Router
     setTimeout @initFullScreen, 100
 
   _trackPageview: ->
-    console.log "_trackPageview"
-    #url = Backbone.history.getFragment()
-    #if not /^\//.test(url) and url isnt ""
-    #  url = "/" + url
-    #_gaq.push ['_trackPageview', url]
+    url = Backbone.history.getFragment()
+    if not /^\//.test(url) and url isnt ""
+      url = "/" + url
+    ga('send', 'pageview', url);
 
   routes:{
     "games/:game_link": "gamepage"
