@@ -490,6 +490,10 @@ $(function() {
       return false;
     }
   });
+  $(document).delegate("*[data-tracking-action]", "click", function(e) {
+    console.log($(this).attr("data-tracking-category"), $(this).attr("data-tracking-action"), $(this).attr("data-tracking-label"), $(this).attr("data-tracking-value"));
+    return ga('send', 'event', $(this).attr("data-tracking-category"), $(this).attr("data-tracking-action"), $(this).attr("data-tracking-label"), $(this).attr("data-tracking-value"));
+  });
   return $('.search-bar .search-query').typeahead({
     source: app.games.search,
     matcher: function() {
