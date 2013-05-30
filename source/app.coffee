@@ -57,7 +57,7 @@ admin        = require './controllers/admin'
 index        = require './controllers/index'
 source       = require './controllers/source'
 
-source.process_image()
+#source.process_image()
 
 
 #logger
