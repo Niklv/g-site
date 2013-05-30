@@ -32,7 +32,6 @@ if process.env.NODETIME_ACCOUNT_KEY
     appName: 'g-sites'
 
 
-
 #requires
 root          = __dirname
 express       = require 'express'
@@ -56,6 +55,10 @@ games        = require './models/games'
 #controllers
 admin        = require './controllers/admin'
 index        = require './controllers/index'
+source       = require './controllers/source'
+
+source.process_image()
+
 
 #logger
 app.log = logentries.logger token: process.env.LOGENTRIES_KEY
