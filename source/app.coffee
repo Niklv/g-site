@@ -144,7 +144,7 @@ startServer = ()->
       mongo:      (cb) -> require('./onstart').connectToMongo app, cb
       memcache:   (cb) -> require('./onstart').connectToMemcache app, cb
       grunt:      (cb) -> require('./onstart').runGrunt app, cb
-      uploadToS3: ['grunt', (cb) -> require('./onstart').uploadStaticToS3 app, cb ]
+      uploadToS3: ['grunt', (cb) -> require('./onstart').uploadStaticToS3(app,cb) ]
     , ()->
       port = process.env.PORT || 5000
       app.listen port, ()->
