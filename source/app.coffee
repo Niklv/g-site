@@ -9,6 +9,9 @@ process.env.BLITLINE_APPLICATION_ID = process.env.BLITLINE_APPLICATION_ID || "3w
 process.env.BLITLINE_URL            = process.env.BLITLINE_URL            || "http://api.blitline.com/job/3wYloUPnQrqOKNOep1I1LJQ"
 process.env.FILEPICKER_API_KEY      = process.env.FILEPICKER_API_KEY      || 'AHM0McfCNSO6RKHvEADdqz'
 process.env.FILEPICKER_API_SECRET   = process.env.FILEPICKER_API_SECRET   || '7HDSNPSHV5GBHJU6EDPBMVNT3A'
+process.env.GA_SERVICE_ACCOUNT      = process.env.GA_SERVICE_ACCOUNT      || "988078811859-ahdshlgvaeepsb6om36av8hvgjqdkqtp.apps.googleusercontent.com"
+process.env.GA_SERVICE_EMAIL        = process.env.GA_SERVICE_EMAIL        || "988078811859-ahdshlgvaeepsb6om36av8hvgjqdkqtp@developer.gserviceaccount.com"
+process.env.GA_KEY_PATH             = process.env.GA_KEY_PATH             || "source/dd77e5dec0df2903003ea629c2aa02a1bceffe29-privatekey.pem"
 process.env.AWS_ACCESS_KEY_ID       = process.env.AWS_ACCESS_KEY_ID       || 'AKIAITI4VR6ZZFFCJ5FA'
 process.env.AWS_SECRET_ACCESS_KEY   = process.env.AWS_SECRET_ACCESS_KEY   || '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'
 process.env.AWS_CLOUDFRONT_IMG      = process.env.AWS_CLOUDFRONT_IMG      || 'd1zjm5k21y5rcp.cloudfront.net'
@@ -58,6 +61,7 @@ index        = require './controllers/index'
 source       = require './controllers/source'
 
 #source.process_image()
+source.collect_data()
 
 
 #logger
