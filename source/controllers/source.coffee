@@ -1,6 +1,7 @@
 fs = require 'fs'
 crypto = require 'crypto'
 request = require 'request'
+qs = require 'querystring'
 http = require 'http'
 googleapis = require 'googleapis'
 
@@ -44,42 +45,53 @@ source_controller =
 
   collect_data: ()->
     authorize (err, data)->
-      console.log err
-      console.log data
+      unless err
+        #Query the number of total visits for a month
+        requestConfig =
+          'ids': 'ga:72911272'
+          'start-date': '2013-04-30'
+          'end-date': '2013-05-31'
+          'metrics': 'ga:visits,ga:bounces'
+        request
+          method: 'GET'
+          headers:
+            'Authorization': 'Bearer ' + data.access_token
+          uri: 'https://www.googleapis.com/analytics/v3/data/ga?' + qs.stringify requestConfig
+        , (err, res, body)->
+          data = JSON.parse body
+          console.log data
+          if data.error
+            console.log data.error.errors
+      else
+        console.log err
 
 
 
 
-authHeader =
-  alg: 'RS256'
-  typ: 'JWT'
 
-authClaimSet =
-  iss: process.env.GA_SERVICE_EMAIL
-  scope: 'https://www.googleapis.com/auth/analytics.readonly'
-  aud: 'https://accounts.google.com/o/oauth2/token'
-
-SIGNATURE_ALGORITHM = 'RSA-SHA256'
-SIGNATURE_ENCODE_METHOD = 'base64'
-gaKey = null
 
 
 authorize = (cb)->
   now = parseInt Date.now() / 1000, 10
-  signatureKey = readPrivateKey()
 
-  #Setup time values
-  authClaimSet.iat = now
-  authClaimSet.exp = now + 60
+  authHeader =
+    alg: 'RS256'
+    typ: 'JWT'
 
-  console.log authClaimSet
+  authClaimSet =
+    iss  : process.env.GA_SERVICE_EMAIL
+    scope: 'https://www.googleapis.com/auth/analytics.readonly'
+    aud  : 'https://accounts.google.com/o/oauth2/token'
+    iat  : now
+    exp  : now + 60
+
   #Setup JWT source
   signatureInput = base64Encode(authHeader) + '.' + base64Encode authClaimSet
 
   #Generate JWT
   cipher = crypto.createSign 'RSA-SHA256'
   cipher.update signatureInput
-  signature = cipher.sign signatureKey, 'base64'
+  signature = cipher.sign readPrivateKey(), 'base64'
   jwt = signatureInput + '.' + urlEscape signature
 
   #Send request to authorize this application
@@ -104,15 +116,12 @@ authorize = (cb)->
 urlEscape = (source)->
   source.replace(/\+/g, '-').replace(/\//g, '_').replace /\=+$/, ''
 
-
 base64Encode = (obj)->
   encoded = new Buffer(JSON.stringify(obj), 'utf8').toString 'base64'
   urlEscape encoded
 
 readPrivateKey = ->
-  unless gaKey
-    gaKey = fs.readFileSync process.env.GA_KEY_PATH, 'utf8'
-  gaKey
+  fs.readFileSync process.env.GA_KEY_PATH, 'utf8'
 
 
 module.exports = source_controller
