@@ -32,7 +32,19 @@ Games = new Schema
     type:Number
     "default": 0
   site: Schema.Types.ObjectId
+  pageviews:
+    type:Number
+    "default": 0
+  avg_time:
+    type:Number
+    "default": 0
+  bounce_rate:
+    type:Number
+    "default": 0
 
+
+Games.statics.getAllBySiteId = (id, cb)->
+  @find {site:id}, cb
 
 Games.statics.getBySlugOrId = (id, ctx, cb)->
   oid = if id?.match "^[0-9A-Fa-f]+$" then new ObjectId id else null

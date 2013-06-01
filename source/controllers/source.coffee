@@ -1,9 +1,13 @@
+_ = require 'underscore'
 fs = require 'fs'
 crypto = require 'crypto'
 request = require 'request'
 qs = require 'querystring'
 http = require 'http'
 googleapis = require 'googleapis'
+mongoose = require 'mongoose'
+sites = mongoose.model 'sites'
+games = mongoose.model 'games'
 
 
 
@@ -43,15 +47,17 @@ source_controller =
     req.write "json=" + JSON.stringify job_data
     req.end()
 
-  collect_data: ()->
+  update_game_analytics: ()->
     authorize (err, data)->
       unless err
         #Query the number of total visits for a month
         requestConfig =
-          'ids': 'ga:72911272'
-          'start-date': '2013-04-30'
-          'end-date': '2013-05-31'
-          'metrics': 'ga:visits,ga:bounces'
+          'ids': 'ga:73030585'
+          'start-date': '2013-02-01'
+          'end-date': '2013-06-01'
+          'metrics': 'ga:pageviews,ga:timeOnPage,ga:bounces'
+          'dimensions': 'ga:hostname,ga:pagePath'
+
         request
           method: 'GET'
           headers:
@@ -59,9 +65,27 @@ source_controller =
           uri: 'https://www.googleapis.com/analytics/v3/data/ga?' + qs.stringify requestConfig
         , (err, res, body)->
           data = JSON.parse body
-          console.log data
           if data.error
             console.log data.error.errors
+          else
+            domains = _.uniq data.rows, false, (it)->it[0]
+            domains = _.map domains, (it) -> it[0]
+            _.each domains, (domainName)->
+              sites.getByDomain (domainName.replace "www.", ""), (err, site)->
+                unless err
+                  games.getAllBySiteId site._id, (err, games)->
+                    unless err
+                      _.each games, (game)->
+                        _.each data.rows, (stat)->
+                          if (stat[0] is domainName) and (stat[1] is "/games/#{game.slug}")
+                            game.pageviews = stat[2]
+                            game.avg_time = stat[3]
+                            game.bounce_rate = stat[4]
+                            game.save()
+                    else
+                      console.log err
+                else
+                  console.log err
       else
         console.log err
 

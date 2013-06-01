@@ -7,7 +7,6 @@ crypto    = require 'crypto'
 cp        = require 'child_process'
 fs        = require 'fs'
 knox      = require 'knox'
-async     = require 'async'
 path      = require 'path'
 
 
